@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upphátt — Lestrarforrit fyrir íslensk börn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:    #0f1923;
+    --sky:    #e8f4fd;
+    --ocean:  #2A6EBB;
+    --deep:   #1A3A5C;
+    --sun:    #FFB830;
+    --moss:   #4CAF7D;
+    --mist:   #8a9bb0;
+    --white:  #ffffff;
+    --radius: 20px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Lora', Georgia, serif;
+    background: var(--white);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(42,110,187,0.08);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--deep);
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .nav-logo-icon {
+    width: 36px; height: 36px;
+    background: var(--ocean);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 900; color: white;
+    font-family: 'Playfair Display', serif;
+  }
+  .nav-cta {
+    background: var(--ocean);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 24px;
+    font-family: 'Lora', Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s;
+    text-decoration: none;
+  }
+  .nav-cta:hover { background: var(--deep); transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Bakgrunns blob */
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(42,110,187,0.07) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--sky);
+    border: 1px solid rgba(42,110,187,0.2);
+    border-radius: 50px;
+    padding: 7px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ocean);
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .eyebrow-dot {
+    width: 7px; height: 7px;
+    background: var(--moss);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(0.8);} }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -3px;
+    color: var(--ink);
+    max-width: 900px;
+    margin-bottom: 12px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--ocean);
+  }
+  .hero h1 .sun-word {
+    position: relative;
+    display: inline-block;
+  }
+  .hero h1 .sun-word::after {
+    content: '';
+    position: absolute;
+    bottom: 4px; left: 0; right: 0;
+    height: 6px;
+    background: var(--sun);
+    border-radius: 3px;
+    z-index: -1;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: underlineIn 0.6s 0.8s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes underlineIn { to { transform: scaleX(1); } }
+
+  .hero-sub {
+    font-size: clamp(17px, 2.5vw, 22px);
+    color: var(--mist);
+    font-weight: 400;
+    max-width: 560px;
+    line-height: 1.6;
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SIGNUP FORM ── */
+  .signup-wrap {
+    animation: fadeUp 0.6s 0.35s ease both;
+    width: 100%;
+    max-width: 480px;
+  }
+  .signup-form {
+    display: flex;
+    gap: 10px;
+    background: white;
+    border: 2px solid #e0e8f0;
+    border-radius: 60px;
+    padding: 6px 6px 6px 20px;
+    box-shadow: 0 8px 40px rgba(42,110,187,0.12);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .signup-form:focus-within {
+    border-color: var(--ocean);
+    box-shadow: 0 8px 40px rgba(42,110,187,0.2);
+  }
+  .signup-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: 'Lora', Georgia, serif;
+    font-size: 15px;
+    color: var(--ink);
+    background: transparent;
+    min-width: 0;
+  }
+  .signup-input::placeholder { color: var(--mist); }
+  .signup-btn {
+    background: var(--ocean);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 28px;
+    font-family: 'Lora', Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, transform 0.15s;
+    flex-shrink: 0;
+  }
+  .signup-btn:hover { background: var(--deep); transform: scale(1.02); }
+  .signup-btn:active { transform: scale(0.98); }
+  .signup-note {
+    font-size: 12px;
+    color: var(--mist);
+    margin-top: 12px;
+    text-align: center;
+  }
+
+  /* Success state */
+  .signup-success {
+    display: none;
+    background: var(--moss);
+    color: white;
+    border-radius: 60px;
+    padding: 16px 28px;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  /* ── PHONES MOCKUP ── */
+  .hero-visual {
+    margin-top: 72px;
+    position: relative;
+    animation: fadeUp 0.6s 0.5s ease both;
+  }
+  .phone {
+    width: 200px;
+    background: var(--ink);
+    border-radius: 36px;
+    padding: 12px;
+    box-shadow: 0 40px 80px rgba(15,25,35,0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .phone.tall { height: 380px; }
+  .phone.short {
+    height: 320px;
+    transform: translateY(20px);
+    opacity: 0.85;
+  }
+  .phone-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 26px;
+    overflow: hidden;
+    position: relative;
+  }
+  .phone-screen {
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    font-size: 10px;
+  }
+  /* Child screen */
+  .ps-topbar {
+    background: var(--ocean);
+    padding: 10px 12px 8px;
+    color: white;
+    font-weight: 700;
+    font-size: 11px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .ps-logo { font-family: 'Playfair Display', serif; font-size: 13px; }
+  .ps-tag { background: var(--sun); color: var(--deep); border-radius: 50px; padding: 2px 8px; font-size: 9px; font-weight: 800; }
+  .ps-body { flex: 1; background: #e8f4fd; padding: 10px; overflow: hidden; }
+  .ps-hero-card {
+    background: linear-gradient(135deg, var(--moss), #2e7a4f);
+    border-radius: 14px;
+    padding: 14px;
+    color: white;
+    margin-bottom: 8px;
+  }
+  .ps-hero-label { font-size: 8px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .ps-hero-title { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .ps-hero-pill { display: inline-block; background: rgba(255,184,48,0.3); border-radius: 50px; padding: 2px 8px; font-size: 8px; font-weight: 700; }
+  .ps-big-btn {
+    background: var(--ocean);
+    border-radius: 12px;
+    padding: 12px;
+    color: white;
+    text-align: center;
+    font-weight: 700;
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+  .ps-big-btn .icon { font-size: 20px; display: block; margin-bottom: 3px; }
+  .ps-card {
+    background: white;
+    border-radius: 10px;
+    padding: 8px;
+    margin-bottom: 6px;
+  }
+  .ps-card-label { font-size: 7px; font-weight: 700; color: var(--mist); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+  .ps-dots { display: flex; gap: 3px; }
+  .ps-dot { flex: 1; height: 22px; border-radius: 5px; }
+  .ps-dot.full { background: var(--moss); }
+  .ps-dot.none { background: #dde5f0; border: 1px dashed #c5d0dc; }
+
+  /* Parent screen */
+  .ps-parent-topbar {
+    background: #7c3aed;
+    padding: 10px 12px 8px;
+    color: white;
+    font-weight: 700;
+    font-size: 11px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .ps-parent-hero {
+    background: linear-gradient(135deg, #7c3aed, #4c1d95);
+    padding: 14px;
+    color: white;
+    margin-bottom: 8px;
+  }
+  .ps-stat-row { display: flex; gap: 5px; margin-bottom: 6px; }
+  .ps-stat {
+    flex: 1;
+    background: white;
+    border-radius: 8px;
+    padding: 6px;
+    text-align: center;
+  }
+  .ps-stat .sv { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; color: var(--ocean); }
+  .ps-stat .sl { font-size: 6px; color: var(--mist); font-weight: 700; text-transform: uppercase; margin-top: 1px; }
+
+  /* ── FEATURES ── */
+  .features {
+    padding: 100px 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .features-header {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+  .section-label {
+    display: inline-block;
+    background: var(--sky);
+    color: var(--ocean);
+    border-radius: 50px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .features-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+    color: var(--ink);
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+  .feature-card {
+    background: var(--sky);
+    border-radius: var(--radius);
+    padding: 36px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+  .feature-card:hover { transform: translateY(-4px); }
+  .feature-card.dark { background: var(--deep); color: white; }
+  .feature-card.sun  { background: var(--sun); }
+  .feature-icon {
+    font-size: 36px;
+    margin-bottom: 20px;
+    display: block;
+  }
+  .feature-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+  }
+  .feature-card.dark h3 { color: white; }
+  .feature-card p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--mist);
+  }
+  .feature-card.dark p { color: rgba(255,255,255,0.7); }
+  .feature-card.sun p { color: rgba(15,25,35,0.7); }
+
+  /* ── HOW IT WORKS ── */
+  .how {
+    background: var(--ink);
+    color: white;
+    padding: 100px 48px;
+    text-align: center;
+  }
+  .how h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    margin-bottom: 64px;
+  }
+  .how h2 em { font-style: italic; font-weight: 300; color: var(--sun); }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 40px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .step { text-align: center; }
+  .step-num {
+    width: 48px; height: 48px;
+    background: var(--sun);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--ink);
+    margin: 0 auto 16px;
+  }
+  .step h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .step p { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.6; }
+
+  /* ── CTA SECTION ── */
+  .cta-section {
+    padding: 100px 24px;
+    text-align: center;
+    background: var(--sky);
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(42,110,187,0.1) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .cta-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 900;
+    letter-spacing: -2px;
+    color: var(--ink);
+    max-width: 700px;
+    margin: 0 auto 16px;
+    line-height: 1.05;
+  }
+  .cta-section h2 em { font-style: italic; font-weight: 300; color: var(--ocean); }
+  .cta-section p {
+    font-size: 18px;
+    color: var(--mist);
+    margin-bottom: 40px;
+  }
+  .cta-form-wrap {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    color: rgba(255,255,255,0.4);
+    padding: 32px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 900;
+    color: white;
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .hero { padding: 100px 20px 60px; }
+    .signup-form { flex-direction: column; border-radius: 20px; padding: 12px; }
+    .signup-btn { width: 100%; padding: 16px; }
+    .phones { gap: 12px; }
+    .phone { width: 150px; }
+    .phone.tall { height: 290px; }
+    .phone.short { height: 240px; }
+    .features { padding: 60px 20px; }
+    .how { padding: 60px 20px; }
+    .cta-section { padding: 60px 20px; }
+    footer { padding: 24px 20px; flex-direction: column; text-align: center; }
+  }
+
+  @media (max-width: 480px) {
+    .phones { display: none; }
+  }
+
+  /* ── IPAD ── */
+  .ipad {
+    width: 280px;
+    background: var(--ink);
+    border-radius: 28px;
+    padding: 10px;
+    box-shadow: 0 40px 80px rgba(15,25,35,0.3);
+    height: 400px;
+    position: relative;
+    z-index: 2;
+  }
+  .ipad-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  /* Phones layout */
+  .phones {
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+    justify-content: center;
+    flex-wrap: nowrap;
+  }
+
+  @media (max-width: 900px) {
+    .phones .phone.short { display: none; }
+    .ipad { width: 220px; height: 320px; }
+  }
+  @media (max-width: 680px) {
+    .ipad { display: none; }
+    .phones .phone.tall:last-of-type { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-icon">U</div>
+    Upphátt
+  </a>
+  <a class="nav-cta" href="#cta">Fá aðgang fyrst</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <div class="eyebrow-dot"></div>
+    Íslenskt lestrarforrit fyrir börn · Kemur bráðlega
+  </div>
+
+  <h1>Lesum <span style="font-style:normal;font-weight:900;text-transform:uppercase;color:var(--ocean);">UPPHÁTT</span> —<br>
+  <span class="sun-word">á hverjum degi</span></h1>
+
+  <p class="hero-sub">
+    Forrit sem hjálpar börnum að þróa lestrarfærni með daglegri æfingu.
+    Einfalt. Skemmtilegt. Íslenskt.
+  </p>
+
+  <div class="signup-wrap">
+    <div class="signup-form" id="hero-form">
+      <input class="signup-input" type="email" id="hero-email" placeholder="netfang þitt" autocomplete="email">
+      <button class="signup-btn" onclick="signup('hero')">Skrá mig á lista →</button>
+    </div>
+    <div class="signup-success" id="hero-success">
+      🎉 Frábært! Við látum þig vita þegar við opnum.
+    </div>
+    <p class="signup-note">Ekkert ruslpóstur. Bara fréttir þegar appið er tilbúið.</p>
+  </div>
+
+  <!-- Device mockups -->
+  <div class="hero-visual">
+    <div class="phones">
+
+      <!-- Sími 1 — Barnaskjár -->
+      <div class="phone tall">
+        <div class="phone-inner">
+          <div class="phone-screen">
+            <div class="ps-topbar">
+              <span class="ps-logo">Upphátt</span>
+              <span class="ps-tag">HRAFNKELL</span>
+            </div>
+            <div class="ps-body">
+              <div class="ps-hero-card">
+                <div class="ps-hero-label">Hæ!</div>
+                <div class="ps-hero-title">Ertu tilbúinn að lesa í dag? 🌟</div>
+                <div class="ps-hero-pill">🔥 5 daga röð</div>
+              </div>
+              <div class="ps-big-btn">
+                <span class="icon">🎤</span>
+                BYRJA AÐ LESA
+              </div>
+              <div class="ps-card">
+                <div class="ps-card-label">Þessi vika</div>
+                <div class="ps-dots">
+                  <div class="ps-dot full"></div>
+                  <div class="ps-dot full"></div>
+                  <div class="ps-dot full"></div>
+                  <div class="ps-dot full"></div>
+                  <div class="ps-dot full"></div>
+                  <div class="ps-dot none"></div>
+                  <div class="ps-dot none"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- iPad — Lestrarskjár með niðurteljara -->
+      <div class="ipad">
+        <div class="ipad-inner">
+          <div class="phone-screen">
+            <div class="ps-topbar" style="padding:12px 16px;">
+              <span style="font-size:11px;opacity:0.7;font-weight:600;">✕ Hætta</span>
+              <span class="ps-logo" style="font-size:15px;">Les upphátt 🎤</span>
+              <span style="width:40px"></span>
+            </div>
+            <div class="ps-body" style="display:flex;flex-direction:column;align-items:center;padding:16px 12px;">
+              <!-- Textabox -->
+              <div style="background:white;border-radius:12px;padding:12px;margin-bottom:14px;width:100%;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                <div style="font-size:7px;font-weight:700;color:var(--ocean);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">🦊 Refurinn og tunglið</div>
+                <div style="font-family:'Playfair Display',serif;font-size:9px;line-height:1.6;color:#1E1E2E;">Á hæðinni sat gáðugur refur og horfði á tunglið. Hann hafði alltaf velt því fyrir sér af hverju það skipti um lögun hverja nótt...</div>
+              </div>
+              <!-- Niðurtalningarhringur -->
+              <div style="position:relative;width:90px;height:90px;margin-bottom:10px;">
+                <svg width="90" height="90" viewBox="0 0 90 90" style="transform:rotate(-90deg)">
+                  <circle cx="45" cy="45" r="38" fill="none" stroke="#e8eff8" stroke-width="6"/>
+                  <circle cx="45" cy="45" r="38" fill="none" stroke="#FF6B6B" stroke-width="6" stroke-linecap="round"
+                    stroke-dasharray="238.8" stroke-dashoffset="60"/>
+                </svg>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+                  <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#FF6B6B;line-height:1;">12:34</div>
+                  <div style="font-size:6px;font-weight:700;color:#8a9bb0;text-transform:uppercase;margin-top:1px;">eftir</div>
+                </div>
+              </div>
+              <div style="font-size:8px;color:#8a9bb0;font-weight:600;margin-bottom:14px;">🎤 Tekur upp · Les upphátt…</div>
+              <div style="background:#FF6B6B;border-radius:10px;padding:10px 20px;color:white;font-size:10px;font-weight:800;">⏹ Klára lestrarlotur</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sími 2 — Nýtt met! -->
+      <div class="phone tall" style="transform:translateY(-10px);">
+        <div class="phone-inner">
+          <div class="phone-screen">
+            <div class="ps-topbar">
+              <span class="ps-logo">Upphátt</span>
+              <span></span>
+            </div>
+            <div class="ps-body" style="display:flex;flex-direction:column;align-items:center;padding:12px;">
+              <div style="font-size:32px;margin:8px 0 4px;">🏆</div>
+              <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:#0f1923;margin-bottom:3px;">Frábær lestur!</div>
+              <div style="font-size:8px;color:#8a9bb0;margin-bottom:10px;">Þú náðir 15 mínútna markmiðinu!</div>
+              <div style="font-size:22px;margin-bottom:10px;">⭐</div>
+              <!-- Nýtt met kassi -->
+              <div style="background:linear-gradient(135deg,#2A6EBB,#1A3A5C);border-radius:12px;padding:12px;width:100%;text-align:center;margin-bottom:8px;">
+                <div style="font-size:18px;margin-bottom:4px;">🏅</div>
+                <div style="font-family:'Playfair Display',serif;font-size:12px;font-weight:700;color:white;margin-bottom:3px;">Nýtt met!</div>
+                <div style="font-size:8px;color:rgba(255,255,255,0.8);font-weight:600;line-height:1.4;">14 dagar í röð —<br>lengsta sem þú hefur náð!</div>
+              </div>
+              <!-- Stats -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;width:100%;">
+                <div class="ps-stat"><div class="sv" style="font-size:13px;">14:22</div><div class="sl">Lesturtími</div></div>
+                <div class="ps-stat"><div class="sv" style="font-size:13px;">🔥14</div><div class="sl">Daga röð</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sími 3 — Foreldri -->
+      <div class="phone short">
+        <div class="phone-inner">
+          <div class="phone-screen">
+            <div class="ps-parent-topbar">
+              <span class="ps-logo">Upphátt</span>
+              <span class="ps-tag" style="background:rgba(255,255,255,0.2);color:white;">FORELDRI</span>
+            </div>
+            <div class="ps-body" style="background:#f3eeff;">
+              <div class="ps-parent-hero">
+                <div class="ps-hero-label">Halló, Guðrún 👋</div>
+                <div class="ps-hero-title">Lestrarbúðir strákaranna</div>
+              </div>
+              <div class="ps-stat-row">
+                <div class="ps-stat"><div class="sv">42m</div><div class="sl">Þessa viku</div></div>
+                <div class="ps-stat"><div class="sv">🔥5</div><div class="sl">Daga röð</div></div>
+                <div class="ps-stat"><div class="sv">6</div><div class="sl">Lotur</div></div>
+              </div>
+              <div class="ps-card">
+                <div class="ps-card-label">Hrafnkell · Þessi vika</div>
+                <div class="ps-dots">
+                  <div class="ps-dot full"></div>
+                  <div class="ps-dot full"></div>
+                  <div class="ps-dot full"></div>
+                  <div class="ps-dot full"></div>
+                  <div class="ps-dot full"></div>
+                  <div class="ps-dot none"></div>
+                  <div class="ps-dot none"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ── -->
+<section class="features">
+  <div class="features-header">
+    <div class="section-label">Hvað er Upphátt?</div>
+    <h2>Lestrarfærni byggist upp<br>með daglegri æfingu</h2>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card dark">
+      <span class="feature-icon">🎤</span>
+      <h3>Les upphátt í 15 mínútur</h3>
+      <p>Barnið velur texta — úr safni eða eigin bók — og les upphátt. Tíminn mælir og hvetur. Einfalt sem það.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔥</span>
+      <h3>Dagleg hvatning</h3>
+      <p>Sigurhrina, verðlaun og skjaldakerfi — ef einn dagur gleymdist heldur röðin áfram. Gæði yfir magn.</p>
+    </div>
+    <div class="feature-card sun">
+      <span class="feature-icon">📊</span>
+      <h3>Foreldrar fylgjast með</h3>
+      <p>Mælaborð sýnir framfarir í rauntíma. Afi og amma geta líka fylgst með — með eigin kóða.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🏆</span>
+      <h3>Verðlaunahillan</h3>
+      <p>Þríhyrningur af 15 táknunum — barnið fyllir hann smám saman. Erfiðari tákn krefjast meiri þrautseigju.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🎯</span>
+      <h3>Barnakóði — engin lykilorð</h3>
+      <p>Foreldri stofnar aðgang og fær einfaldan kóða fyrir barnið. Barnið slær hann inn einu sinni — tækið man.</p>
+    </div>
+    <div class="feature-card dark">
+      <span class="feature-icon">🇮🇸</span>
+      <h3>Íslenskt — í eðli sínu</h3>
+      <p>Hannað sérstaklega fyrir íslenskar fjölskyldur. Textasafnið er á íslensku. Allt er á íslensku.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="how">
+  <h2>Hvernig það <em>virkar</em></h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Foreldri stofnar</h3>
+      <p>Stofnar aðgang, bætir við börnum og fær einfalt kóða fyrir hvert barn.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Barn skráir sig inn</h3>
+      <p>Slær inn kóðann sinn á síma eða spjaldtölvu. Kemst beint inn á sína síðu.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Les upphátt á hverjum degi</h3>
+      <p>Velur texta, ýtir á „Byrja" og les upphátt í 15 mínútur. Tíminn mælir.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h3>Allir fylgjast með</h3>
+      <p>Foreldri, afi, amma — sjá framfarir í rauntíma á mælaborðinu sínu.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section" id="cta">
+  <h2>Vertu <em>fyrst</em><br>á listanum</h2>
+  <p>Við erum að þróa Upphátt núna. Skráðu þig og fáðu aðgang fyrst.</p>
+  <div class="cta-form-wrap">
+    <div class="signup-form" id="cta-form">
+      <input class="signup-input" type="email" id="cta-email" placeholder="netfang þitt" autocomplete="email">
+      <button class="signup-btn" onclick="signup('cta')">Skrá mig →</button>
+    </div>
+    <div class="signup-success" id="cta-success">
+      🎉 Frábært! Við látum þig vita þegar við opnum.
+    </div>
+    <p class="signup-note">Ekkert ruslpóstur. Við heldur netfanginu þínu öruggu.</p>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">Upphátt</div>
+  <div>Þróað á Íslandi · 2026</div>
+  <div>upphátt@upphátt.is</div>
+</footer>
+
+<script>
+function signup(form) {
+  const emailEl = document.getElementById(form + '-email');
+  const formEl  = document.getElementById(form + '-form');
+  const succEl  = document.getElementById(form + '-success');
+  const email   = emailEl ? emailEl.value.trim() : '';
+
+  if(!email || !email.includes('@')) {
+    emailEl.style.color = '#FF6B6B';
+    emailEl.placeholder = 'Sláðu inn gilt netfang';
+    setTimeout(() => { emailEl.style.color = ''; emailEl.placeholder = 'netfang þitt'; }, 2000);
+    return;
+  }
+
+  // Hér myndi vera API kall á póstlista (Mailchimp, ConvertKit o.fl.)
+  // Sem dæmi: fetch('https://your-api/subscribe', { method:'POST', body: JSON.stringify({email}) })
+
+  formEl.style.display = 'none';
+  succEl.style.display = 'block';
+
+  // Ef báðir formarnir eru til — sýna success á báðum
+  ['hero','cta'].forEach(f => {
+    const fe = document.getElementById(f+'-form');
+    const se = document.getElementById(f+'-success');
+    if(fe) fe.style.display = 'none';
+    if(se) se.style.display = 'block';
+  });
+}
+
+// Enter key support
+document.querySelectorAll('.signup-input').forEach(input => {
+  input.addEventListener('keydown', e => {
+    if(e.key === 'Enter') {
+      const form = input.id.replace('-email', '');
+      signup(form);
+    }
+  });
+});
+</script>
+
+</body>
+</html>
