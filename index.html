@@ -2,894 +2,1517 @@
 <html lang="is">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Upphátt — Lestrarforrit fyrir íslensk börn</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Upphátt">
+<title>Upphátt</title>
 <style>
-  :root {
-    --ink:    #0f1923;
-    --sky:    #e8f4fd;
-    --ocean:  #2A6EBB;
-    --deep:   #1A3A5C;
-    --sun:    #FFB830;
-    --moss:   #4CAF7D;
-    --mist:   #8a9bb0;
-    --white:  #ffffff;
-    --radius: 20px;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'Lora', Georgia, serif;
-    background: var(--white);
-    color: var(--ink);
-    overflow-x: hidden;
-  }
-
-  /* ── GRAIN OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0.4;
-  }
-
-  /* ── NAV ── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    padding: 20px 48px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(255,255,255,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(42,110,187,0.08);
-  }
-  .nav-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    font-weight: 900;
-    color: var(--deep);
-    letter-spacing: -0.5px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-  }
-  .nav-logo-icon {
-    width: 36px; height: 36px;
-    background: var(--ocean);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; font-weight: 900; color: white;
-    font-family: 'Playfair Display', serif;
-  }
-  .nav-cta {
-    background: var(--ocean);
-    color: white;
-    border: none;
-    border-radius: 50px;
-    padding: 10px 24px;
-    font-family: 'Lora', Georgia, serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.15s, background 0.15s;
-    text-decoration: none;
-  }
-  .nav-cta:hover { background: var(--deep); transform: translateY(-1px); }
-
-  /* ── HERO ── */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 120px 24px 80px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* Bakgrunns blob */
-  .hero::after {
-    content: '';
-    position: absolute;
-    width: 800px; height: 800px;
-    background: radial-gradient(circle, rgba(42,110,187,0.07) 0%, transparent 70%);
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-  }
-
-  .hero-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--sky);
-    border: 1px solid rgba(42,110,187,0.2);
-    border-radius: 50px;
-    padding: 7px 18px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--ocean);
-    margin-bottom: 32px;
-    animation: fadeUp 0.6s ease both;
-  }
-  .eyebrow-dot {
-    width: 7px; height: 7px;
-    background: var(--moss);
-    border-radius: 50%;
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(0.8);} }
-
-  .hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(48px, 8vw, 96px);
-    font-weight: 900;
-    line-height: 1.0;
-    letter-spacing: -3px;
-    color: var(--ink);
-    max-width: 900px;
-    margin-bottom: 12px;
-    animation: fadeUp 0.6s 0.1s ease both;
-  }
-  .hero h1 em {
-    font-style: italic;
-    font-weight: 300;
-    color: var(--ocean);
-  }
-  .hero h1 .sun-word {
-    position: relative;
-    display: inline-block;
-  }
-  .hero h1 .sun-word::after {
-    content: '';
-    position: absolute;
-    bottom: 4px; left: 0; right: 0;
-    height: 6px;
-    background: var(--sun);
-    border-radius: 3px;
-    z-index: -1;
-    transform: scaleX(0);
-    transform-origin: left;
-    animation: underlineIn 0.6s 0.8s cubic-bezier(.34,1.56,.64,1) both;
-  }
-  @keyframes underlineIn { to { transform: scaleX(1); } }
-
-  .hero-sub {
-    font-size: clamp(17px, 2.5vw, 22px);
-    color: var(--mist);
-    font-weight: 400;
-    max-width: 560px;
-    line-height: 1.6;
-    margin-bottom: 48px;
-    animation: fadeUp 0.6s 0.2s ease both;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── SIGNUP FORM ── */
-  .signup-wrap {
-    animation: fadeUp 0.6s 0.35s ease both;
-    width: 100%;
-    max-width: 480px;
-  }
-  .signup-form {
-    display: flex;
-    gap: 10px;
-    background: white;
-    border: 2px solid #e0e8f0;
-    border-radius: 60px;
-    padding: 6px 6px 6px 20px;
-    box-shadow: 0 8px 40px rgba(42,110,187,0.12);
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .signup-form:focus-within {
-    border-color: var(--ocean);
-    box-shadow: 0 8px 40px rgba(42,110,187,0.2);
-  }
-  .signup-input {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-family: 'Lora', Georgia, serif;
-    font-size: 15px;
-    color: var(--ink);
-    background: transparent;
-    min-width: 0;
-  }
-  .signup-input::placeholder { color: var(--mist); }
-  .signup-btn {
-    background: var(--ocean);
-    color: white;
-    border: none;
-    border-radius: 50px;
-    padding: 14px 28px;
-    font-family: 'Lora', Georgia, serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.15s, transform 0.15s;
-    flex-shrink: 0;
-  }
-  .signup-btn:hover { background: var(--deep); transform: scale(1.02); }
-  .signup-btn:active { transform: scale(0.98); }
-  .signup-note {
-    font-size: 12px;
-    color: var(--mist);
-    margin-top: 12px;
-    text-align: center;
-  }
-
-  /* Success state */
-  .signup-success {
-    display: none;
-    background: var(--moss);
-    color: white;
-    border-radius: 60px;
-    padding: 16px 28px;
-    font-size: 15px;
-    font-weight: 600;
-    text-align: center;
-    animation: fadeUp 0.4s ease both;
-  }
-
-  /* ── PHONES MOCKUP ── */
-  .hero-visual {
-    margin-top: 72px;
-    position: relative;
-    animation: fadeUp 0.6s 0.5s ease both;
-  }
-  .phone {
-    width: 200px;
-    background: var(--ink);
-    border-radius: 36px;
-    padding: 12px;
-    box-shadow: 0 40px 80px rgba(15,25,35,0.25);
-    position: relative;
-    overflow: hidden;
-  }
-  .phone.tall { height: 380px; }
-  .phone.short {
-    height: 320px;
-    transform: translateY(20px);
-    opacity: 0.85;
-  }
-  .phone-inner {
-    width: 100%;
-    height: 100%;
-    border-radius: 26px;
-    overflow: hidden;
-    position: relative;
-  }
-  .phone-screen {
-    width: 100%; height: 100%;
-    display: flex;
-    flex-direction: column;
-    font-size: 10px;
-  }
-  /* Child screen */
-  .ps-topbar {
-    background: var(--ocean);
-    padding: 10px 12px 8px;
-    color: white;
-    font-weight: 700;
-    font-size: 11px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .ps-logo { font-family: 'Playfair Display', serif; font-size: 13px; }
-  .ps-tag { background: var(--sun); color: var(--deep); border-radius: 50px; padding: 2px 8px; font-size: 9px; font-weight: 800; }
-  .ps-body { flex: 1; background: #e8f4fd; padding: 10px; overflow: hidden; }
-  .ps-hero-card {
-    background: linear-gradient(135deg, var(--moss), #2e7a4f);
-    border-radius: 14px;
-    padding: 14px;
-    color: white;
-    margin-bottom: 8px;
-  }
-  .ps-hero-label { font-size: 8px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-  .ps-hero-title { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
-  .ps-hero-pill { display: inline-block; background: rgba(255,184,48,0.3); border-radius: 50px; padding: 2px 8px; font-size: 8px; font-weight: 700; }
-  .ps-big-btn {
-    background: var(--ocean);
-    border-radius: 12px;
-    padding: 12px;
-    color: white;
-    text-align: center;
-    font-weight: 700;
-    font-size: 11px;
-    margin-bottom: 8px;
-  }
-  .ps-big-btn .icon { font-size: 20px; display: block; margin-bottom: 3px; }
-  .ps-card {
-    background: white;
-    border-radius: 10px;
-    padding: 8px;
-    margin-bottom: 6px;
-  }
-  .ps-card-label { font-size: 7px; font-weight: 700; color: var(--mist); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
-  .ps-dots { display: flex; gap: 3px; }
-  .ps-dot { flex: 1; height: 22px; border-radius: 5px; }
-  .ps-dot.full { background: var(--moss); }
-  .ps-dot.none { background: #dde5f0; border: 1px dashed #c5d0dc; }
-
-  /* Parent screen */
-  .ps-parent-topbar {
-    background: #7c3aed;
-    padding: 10px 12px 8px;
-    color: white;
-    font-weight: 700;
-    font-size: 11px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .ps-parent-hero {
-    background: linear-gradient(135deg, #7c3aed, #4c1d95);
-    padding: 14px;
-    color: white;
-    margin-bottom: 8px;
-  }
-  .ps-stat-row { display: flex; gap: 5px; margin-bottom: 6px; }
-  .ps-stat {
-    flex: 1;
-    background: white;
-    border-radius: 8px;
-    padding: 6px;
-    text-align: center;
-  }
-  .ps-stat .sv { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; color: var(--ocean); }
-  .ps-stat .sl { font-size: 6px; color: var(--mist); font-weight: 700; text-transform: uppercase; margin-top: 1px; }
-
-  /* ── FEATURES ── */
-  .features {
-    padding: 100px 48px;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-  .features-header {
-    text-align: center;
-    margin-bottom: 64px;
-  }
-  .section-label {
-    display: inline-block;
-    background: var(--sky);
-    color: var(--ocean);
-    border-radius: 50px;
-    padding: 6px 16px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-  }
-  .features-header h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(32px, 5vw, 52px);
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -1.5px;
-    color: var(--ink);
-  }
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 24px;
-  }
-  .feature-card {
-    background: var(--sky);
-    border-radius: var(--radius);
-    padding: 36px 32px;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s;
-  }
-  .feature-card:hover { transform: translateY(-4px); }
-  .feature-card.dark { background: var(--deep); color: white; }
-  .feature-card.sun  { background: var(--sun); }
-  .feature-icon {
-    font-size: 36px;
-    margin-bottom: 20px;
-    display: block;
-  }
-  .feature-card h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    letter-spacing: -0.5px;
-  }
-  .feature-card.dark h3 { color: white; }
-  .feature-card p {
-    font-size: 15px;
-    line-height: 1.65;
-    color: var(--mist);
-  }
-  .feature-card.dark p { color: rgba(255,255,255,0.7); }
-  .feature-card.sun p { color: rgba(15,25,35,0.7); }
-
-  /* ── HOW IT WORKS ── */
-  .how {
-    background: var(--ink);
-    color: white;
-    padding: 100px 48px;
-    text-align: center;
-  }
-  .how h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(32px, 5vw, 52px);
-    font-weight: 700;
-    letter-spacing: -1.5px;
-    margin-bottom: 64px;
-  }
-  .how h2 em { font-style: italic; font-weight: 300; color: var(--sun); }
-  .steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 40px;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-  .step { text-align: center; }
-  .step-num {
-    width: 48px; height: 48px;
-    background: var(--sun);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    font-weight: 900;
-    color: var(--ink);
-    margin: 0 auto 16px;
-  }
-  .step h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
-  .step p { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.6; }
-
-  /* ── CTA SECTION ── */
-  .cta-section {
-    padding: 100px 24px;
-    text-align: center;
-    background: var(--sky);
-    position: relative;
-    overflow: hidden;
-  }
-  .cta-section::before {
-    content: '';
-    position: absolute;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(42,110,187,0.1) 0%, transparent 70%);
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-  }
-  .cta-section h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(36px, 6vw, 64px);
-    font-weight: 900;
-    letter-spacing: -2px;
-    color: var(--ink);
-    max-width: 700px;
-    margin: 0 auto 16px;
-    line-height: 1.05;
-  }
-  .cta-section h2 em { font-style: italic; font-weight: 300; color: var(--ocean); }
-  .cta-section p {
-    font-size: 18px;
-    color: var(--mist);
-    margin-bottom: 40px;
-  }
-  .cta-form-wrap {
-    max-width: 480px;
-    margin: 0 auto;
-  }
-
-  /* ── FOOTER ── */
-  footer {
-    background: var(--ink);
-    color: rgba(255,255,255,0.4);
-    padding: 32px 48px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 13px;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  .footer-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    font-weight: 900;
-    color: white;
-  }
-
-  /* ── MOBILE ── */
-  @media (max-width: 768px) {
-    nav { padding: 16px 20px; }
-    .hero { padding: 100px 20px 60px; }
-    .signup-form { flex-direction: column; border-radius: 20px; padding: 12px; }
-    .signup-btn { width: 100%; padding: 16px; }
-    .phones { gap: 12px; }
-    .phone { width: 150px; }
-    .phone.tall { height: 290px; }
-    .phone.short { height: 240px; }
-    .features { padding: 60px 20px; }
-    .how { padding: 60px 20px; }
-    .cta-section { padding: 60px 20px; }
-    footer { padding: 24px 20px; flex-direction: column; text-align: center; }
-  }
-
-  @media (max-width: 480px) {
-    .phones { display: none; }
-  }
-
-  /* ── IPAD ── */
-  .ipad {
-    width: 280px;
-    background: var(--ink);
-    border-radius: 28px;
-    padding: 10px;
-    box-shadow: 0 40px 80px rgba(15,25,35,0.3);
-    height: 400px;
-    position: relative;
-    z-index: 2;
-  }
-  .ipad-inner {
-    width: 100%;
-    height: 100%;
-    border-radius: 20px;
-    overflow: hidden;
-  }
-
-  /* Phones layout */
-  .phones {
-    display: flex;
-    gap: 16px;
-    align-items: flex-end;
-    justify-content: center;
-    flex-wrap: nowrap;
-  }
-
-  @media (max-width: 900px) {
-    .phones .phone.short { display: none; }
-    .ipad { width: 220px; height: 320px; }
-  }
-  @media (max-width: 680px) {
-    .ipad { display: none; }
-    .phones .phone.tall:last-of-type { display: none; }
-  }
+:root{
+  --sky:#E8F4FD;--ocean:#2A6EBB;--deep:#1A3A5C;--moss:#4CAF7D;--coral:#FF6B6B;
+  --mist:#8A9BB0;--sun:#FFB830;--purple:#7c3aed;
+  --card-shadow:0 4px 20px rgba(26,58,92,.10);
+}
+*{box-sizing:border-box} html,body{height:100%;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--sky);color:#1E1E2E}
+.screen{display:none;min-height:100vh;flex-direction:column}.screen.active{display:flex}
+.topbar{background:var(--ocean);color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;box-shadow:0 2px 12px rgba(42,110,187,.25)}
+.logo{font-family:Georgia,serif;font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}
+.logo-icon{width:30px;height:30px;background:#fff;border-radius:7px;color:var(--ocean);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:900}
+.scroll-body{flex:1;overflow:auto;padding:18px 16px 40px;max-width:520px;width:100%;margin:0 auto}
+.hero{border-radius:22px;padding:24px 20px;color:#fff;margin-bottom:18px;background:linear-gradient(135deg,var(--ocean),var(--deep))}
+.hero.green{background:linear-gradient(135deg,var(--moss),#2e7a4f)}
+.hero.purple{background:linear-gradient(135deg,var(--purple),#4c1d95)}
+.hero-label{font-size:11px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;opacity:.8;margin-bottom:6px}
+.hero h1{font-family:Georgia,serif;font-size:28px;line-height:1.1;margin:0 0 8px}
+.hero p{margin:0;font-size:14px;opacity:.88;font-weight:600}
+.card{background:#fff;border-radius:18px;padding:15px;margin-bottom:12px;box-shadow:var(--card-shadow)}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:11px;font-weight:800;color:var(--deep);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.form-group input{width:100%;border:2px solid #dde5f0;border-radius:12px;padding:14px;font-size:16px;font-weight:600;background:#f7fbff;outline:none}
+.form-group input:focus{border-color:var(--ocean);background:#fff}
+.btn{width:100%;border:none;border-radius:16px;padding:16px;font-size:17px;font-weight:800;cursor:pointer}
+.btn-primary{background:var(--ocean);color:#fff}
+.btn-success{background:var(--moss);color:#fff}
+.btn-ghost{background:#fff;color:var(--deep);border:2px solid #dde5f0}
+.btn+.btn{margin-top:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.choice{border:none;border-radius:20px;padding:24px 16px;color:#fff;cursor:pointer;width:100%}
+.choice.blue{background:var(--ocean)}.choice.green{background:var(--moss)}
+.choice .big{font-size:36px;display:block;margin-bottom:8px}
+.choice .title{font-size:15px;font-weight:800}
+.choice .sub{font-size:11px;opacity:.85;margin-top:4px}
+.back-btn{background:rgba(255,255,255,.18);border:none;border-radius:999px;color:#fff;font-size:13px;font-weight:700;padding:7px 14px;cursor:pointer}
+.notice{font-size:12px;color:var(--mist);font-weight:700;min-height:18px}
+.timer-wrap{text-align:center;padding:16px 0}
+.timer-big{font-family:Georgia,serif;font-size:72px;font-weight:700;color:var(--deep);line-height:1}
+.timer-big.running{color:var(--moss)}
+.timer-big.done{color:var(--sun)}
+.timer-sub{font-size:12px;color:var(--mist);font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-top:6px}
+.rec-dot{display:inline-block;width:8px;height:8px;background:var(--coral);border-radius:50%;margin-right:5px;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.week-dots{display:flex;gap:4px}
+.day-dot{flex:1;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:8px;font-weight:800;gap:2px}
+.day-dot.full{background:var(--moss);color:#fff}
+.day-dot.partial{background:#b8e0c8;color:#2e7a4f}
+.day-dot.none{background:#f0f4f9;color:#aab7c4;border:1.5px dashed #dde5f0}
+.session{padding:12px 0;border-bottom:1px solid #eef3f9}
+.session:last-child{border-bottom:none}
+.session-title{font-size:14px;font-weight:800}
+.session-meta{font-size:11px;color:var(--mist);margin-top:3px}
+.group-title{font-family:Georgia,serif;font-size:22px;color:var(--deep);margin:4px 0 12px;font-weight:700}
+.audio-box{margin-top:8px}
+audio{width:100%;border-radius:8px}
+.streak-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,184,48,0.25);border-radius:50px;padding:6px 14px;font-size:13px;font-weight:800;color:var(--deep);margin-top:8px}
+.pill{display:inline-block;background:#eef5ff;color:var(--ocean);border-radius:999px;padding:5px 10px;font-size:11px;font-weight:800}
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.stat-box{background:#f7fbff;border-radius:12px;padding:10px;text-align:center}
+.stat-val{font-family:Georgia,serif;font-size:22px;font-weight:700;color:var(--ocean)}
+.stat-lbl{font-size:9px;font-weight:800;color:var(--mist);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.mode-picker{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.mode-btn{border:2px solid #dde5f0;background:#fff;border-radius:14px;padding:14px;cursor:pointer;text-align:center;font-weight:800;font-size:13px;color:var(--deep)}
+.mode-btn.active{background:var(--ocean);border-color:var(--ocean);color:#fff}
+.audio-clips-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 4px}
+.clip-btn{background:#f0f9f4;border:1.5px solid var(--moss);border-radius:10px;padding:8px 4px;
+  font-size:11px;font-weight:800;color:#1a7a3f;cursor:pointer;text-align:center;line-height:1.3}
+.clip-btn:disabled{background:#f5f5f5;border-color:#dde5f0;color:#aab7c4;cursor:default}
+.clip-btn.loading{background:#fffbe6;border-color:var(--sun);color:#b07d00}
+.clip-player{margin-top:6px;display:none}
+.clip-player audio{width:100%;border-radius:8px}
 </style>
 </head>
 <body>
 
-<!-- ── NAV ── -->
-<nav>
-  <a class="nav-logo" href="#">
-    <div class="nav-logo-icon">U</div>
-    Upphátt
-  </a>
-  <a class="nav-cta" href="#cta">Fá aðgang fyrst</a>
-</nav>
-
-<!-- ── HERO ── -->
-<section class="hero">
-  <div class="hero-eyebrow">
-    <div class="eyebrow-dot"></div>
-    Íslenskt lestrarforrit fyrir börn · Kemur bráðlega
-  </div>
-
-  <h1>Lesum <span style="font-style:normal;font-weight:900;text-transform:uppercase;color:var(--ocean);">UPPHÁTT</span> —<br>
-  <span class="sun-word">á hverjum degi</span></h1>
-
-  <p class="hero-sub">
-    Forrit sem hjálpar börnum að þróa lestrarfærni með daglegri æfingu.
-    Einfalt. Skemmtilegt. Íslenskt.
-  </p>
-
-  <div class="signup-wrap">
-    <div class="signup-form" id="hero-form">
-      <input class="signup-input" type="email" id="hero-email" placeholder="netfang þitt" autocomplete="email">
-      <button class="signup-btn" onclick="signup('hero')">Skrá mig á lista →</button>
-    </div>
-    <div class="signup-success" id="hero-success">
-      🎉 Frábært! Við látum þig vita þegar við opnum.
-    </div>
-    <p class="signup-note">Ekkert ruslpóstur. Bara fréttir þegar appið er tilbúið.</p>
-  </div>
-
-  <!-- Device mockups -->
-  <div class="hero-visual">
-    <div class="phones">
-
-      <!-- Sími 1 — Barnaskjár -->
-      <div class="phone tall">
-        <div class="phone-inner">
-          <div class="phone-screen">
-            <div class="ps-topbar">
-              <span class="ps-logo">Upphátt</span>
-              <span class="ps-tag">HRAFNKELL</span>
-            </div>
-            <div class="ps-body">
-              <div class="ps-hero-card">
-                <div class="ps-hero-label">Hæ!</div>
-                <div class="ps-hero-title">Ertu tilbúinn að lesa í dag? 🌟</div>
-                <div class="ps-hero-pill">🔥 5 daga röð</div>
-              </div>
-              <div class="ps-big-btn">
-                <span class="icon">🎤</span>
-                BYRJA AÐ LESA
-              </div>
-              <div class="ps-card">
-                <div class="ps-card-label">Þessi vika</div>
-                <div class="ps-dots">
-                  <div class="ps-dot full"></div>
-                  <div class="ps-dot full"></div>
-                  <div class="ps-dot full"></div>
-                  <div class="ps-dot full"></div>
-                  <div class="ps-dot full"></div>
-                  <div class="ps-dot none"></div>
-                  <div class="ps-dot none"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+<!-- LOGIN -->
+<div id="screen-login" class="screen active">
+  <div class="scroll-body" style="display:flex;align-items:center;justify-content:center;min-height:100vh;">
+    <div style="width:100%;max-width:420px">
+      <div style="text-align:center;margin-bottom:28px">
+        <div style="font-family:Georgia,serif;font-size:56px;font-weight:700;color:var(--ocean)">Upphátt</div>
+        <div style="font-size:14px;color:var(--mist);font-weight:600">Íslenskt lestrarforrit</div>
       </div>
 
-      <!-- iPad — Lestrarskjár með niðurteljara -->
-      <div class="ipad">
-        <div class="ipad-inner">
-          <div class="phone-screen">
-            <div class="ps-topbar" style="padding:12px 16px;">
-              <span style="font-size:11px;opacity:0.7;font-weight:600;">✕ Hætta</span>
-              <span class="ps-logo" style="font-size:15px;">Les upphátt 🎤</span>
-              <span style="width:40px"></span>
-            </div>
-            <div class="ps-body" style="display:flex;flex-direction:column;align-items:center;padding:16px 12px;">
-              <!-- Textabox -->
-              <div style="background:white;border-radius:12px;padding:12px;margin-bottom:14px;width:100%;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-                <div style="font-size:7px;font-weight:700;color:var(--ocean);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">🦊 Refurinn og tunglið</div>
-                <div style="font-family:'Playfair Display',serif;font-size:9px;line-height:1.6;color:#1E1E2E;">Á hæðinni sat gáðugur refur og horfði á tunglið. Hann hafði alltaf velt því fyrir sér af hverju það skipti um lögun hverja nótt...</div>
-              </div>
-              <!-- Niðurtalningarhringur -->
-              <div style="position:relative;width:90px;height:90px;margin-bottom:10px;">
-                <svg width="90" height="90" viewBox="0 0 90 90" style="transform:rotate(-90deg)">
-                  <circle cx="45" cy="45" r="38" fill="none" stroke="#e8eff8" stroke-width="6"/>
-                  <circle cx="45" cy="45" r="38" fill="none" stroke="#FF6B6B" stroke-width="6" stroke-linecap="round"
-                    stroke-dasharray="238.8" stroke-dashoffset="60"/>
-                </svg>
-                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
-                  <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#FF6B6B;line-height:1;">12:34</div>
-                  <div style="font-size:6px;font-weight:700;color:#8a9bb0;text-transform:uppercase;margin-top:1px;">eftir</div>
-                </div>
-              </div>
-              <div style="font-size:8px;color:#8a9bb0;font-weight:600;margin-bottom:14px;">🎤 Tekur upp · Les upphátt…</div>
-              <div style="background:#FF6B6B;border-radius:10px;padding:10px 20px;color:white;font-size:10px;font-weight:800;">⏹ Klára lestrarlotur</div>
-            </div>
-          </div>
-        </div>
+      <div class="grid2" style="margin-bottom:12px">
+        <button class="choice purple" onclick="goTo('screen-register')">
+          <span class="big">✨</span>
+          <span class="title">Nýskráning foreldris</span>
+          <div class="sub">Búa til nýjan aðgang</div>
+        </button>
+
+        <button class="choice blue" onclick="goTo('screen-parent-login')">
+          <span class="big">👩</span>
+          <span class="title">Innskráning forsjármanns</span>
+          <div class="sub">Netfang + lykilorð</div>
+        </button>
       </div>
 
-      <!-- Sími 2 — Nýtt met! -->
-      <div class="phone tall" style="transform:translateY(-10px);">
-        <div class="phone-inner">
-          <div class="phone-screen">
-            <div class="ps-topbar">
-              <span class="ps-logo">Upphátt</span>
-              <span></span>
-            </div>
-            <div class="ps-body" style="display:flex;flex-direction:column;align-items:center;padding:12px;">
-              <div style="font-size:32px;margin:8px 0 4px;">🏆</div>
-              <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:#0f1923;margin-bottom:3px;">Frábær lestur!</div>
-              <div style="font-size:8px;color:#8a9bb0;margin-bottom:10px;">Þú náðir 15 mínútna markmiðinu!</div>
-              <div style="font-size:22px;margin-bottom:10px;">⭐</div>
-              <!-- Nýtt met kassi -->
-              <div style="background:linear-gradient(135deg,#2A6EBB,#1A3A5C);border-radius:12px;padding:12px;width:100%;text-align:center;margin-bottom:8px;">
-                <div style="font-size:18px;margin-bottom:4px;">🏅</div>
-                <div style="font-family:'Playfair Display',serif;font-size:12px;font-weight:700;color:white;margin-bottom:3px;">Nýtt met!</div>
-                <div style="font-size:8px;color:rgba(255,255,255,0.8);font-weight:600;line-height:1.4;">14 dagar í röð —<br>lengsta sem þú hefur náð!</div>
-              </div>
-              <!-- Stats -->
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;width:100%;">
-                <div class="ps-stat"><div class="sv" style="font-size:13px;">14:22</div><div class="sl">Lesturtími</div></div>
-                <div class="ps-stat"><div class="sv" style="font-size:13px;">🔥14</div><div class="sl">Daga röð</div></div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="grid2">
+        <button class="choice" style="background:var(--coral)" onclick="goTo('screen-family-key')">
+          <span class="big">👨‍👩‍👧</span>
+          <span class="title">Nota fjölskyldulykil</span>
+          <div class="sub">Afi, amma, maki</div>
+        </button>
+
+        <button class="choice green" onclick="goTo('screen-child-login')">
+          <span class="big">👦</span>
+          <span class="title">Ég er barn</span>
+          <div class="sub">Ég er með lykil</div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- REGISTER -->
+<div id="screen-register" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goTo('screen-login')">← Til baka</button>
+    <div class="logo"><div class="logo-icon">U</div> Upphátt</div>
+    <div></div>
+  </div>
+  <div class="scroll-body">
+    <div class="hero purple">
+      <div class="hero-label">Nýskráning</div>
+      <h1>Búðu til aðgang ✨</h1>
+      <p>Þú færð fjölskyldulykil og barnalykla.</p>
+    </div>
+
+    <div class="card">
+      <div class="form-group">
+        <label>Nafnið þitt</label>
+        <input id="reg-name" type="text" placeholder="t.d. Guðrún">
       </div>
 
-      <!-- Sími 3 — Foreldri -->
-      <div class="phone short">
-        <div class="phone-inner">
-          <div class="phone-screen">
-            <div class="ps-parent-topbar">
-              <span class="ps-logo">Upphátt</span>
-              <span class="ps-tag" style="background:rgba(255,255,255,0.2);color:white;">FORELDRI</span>
-            </div>
-            <div class="ps-body" style="background:#f3eeff;">
-              <div class="ps-parent-hero">
-                <div class="ps-hero-label">Halló, Guðrún 👋</div>
-                <div class="ps-hero-title">Lestrarbúðir strákaranna</div>
-              </div>
-              <div class="ps-stat-row">
-                <div class="ps-stat"><div class="sv">42m</div><div class="sl">Þessa viku</div></div>
-                <div class="ps-stat"><div class="sv">🔥5</div><div class="sl">Daga röð</div></div>
-                <div class="ps-stat"><div class="sv">6</div><div class="sl">Lotur</div></div>
-              </div>
-              <div class="ps-card">
-                <div class="ps-card-label">Hrafnkell · Þessi vika</div>
-                <div class="ps-dots">
-                  <div class="ps-dot full"></div>
-                  <div class="ps-dot full"></div>
-                  <div class="ps-dot full"></div>
-                  <div class="ps-dot full"></div>
-                  <div class="ps-dot full"></div>
-                  <div class="ps-dot none"></div>
-                  <div class="ps-dot none"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="form-group">
+        <label>Netfang</label>
+        <input id="reg-email" type="email" placeholder="þu@dæmi.is">
       </div>
 
+      <div class="form-group">
+        <label>Lykilorð</label>
+        <input id="reg-pw" type="password" placeholder="••••••••">
+      </div>
+
+      <div class="form-group">
+        <label>Nafn / nöfn á barni</label>
+        <input id="reg-children" type="text" placeholder="t.d. Kolbeinn, Sara">
+      </div>
+
+      <div id="reg-error" class="notice" style="color:var(--coral);margin-bottom:10px"></div>
+      <button class="btn btn-primary" onclick="doRegister()">✨ Nýskrá</button>
     </div>
   </div>
-</section>
+</div>
 
-<!-- ── FEATURES ── -->
-<section class="features">
-  <div class="features-header">
-    <div class="section-label">Hvað er Upphátt?</div>
-    <h2>Lestrarfærni byggist upp<br>með daglegri æfingu</h2>
+<!-- REGISTER DONE -->
+<div id="screen-register-done" class="screen">
+  <div class="topbar">
+    <div></div>
+    <div class="logo"><div class="logo-icon">U</div> Upphátt</div>
+    <div></div>
   </div>
+  <div class="scroll-body">
+    <div class="hero green">
+      <div class="hero-label">Tilbúið</div>
+      <h1>Aðgangur stofnaður 🎉</h1>
+      <p>Vistaðu þessa lykla vel.</p>
+    </div>
 
-  <div class="features-grid">
-    <div class="feature-card dark">
-      <span class="feature-icon">🎤</span>
-      <h3>Les upphátt í 15 mínútur</h3>
-      <p>Barnið velur texta — úr safni eða eigin bók — og les upphátt. Tíminn mælir og hvetur. Einfalt sem það.</p>
+    <div class="card" style="text-align:center">
+      <div style="font-size:11px;font-weight:800;color:var(--mist);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Fjölskyldulykill</div>
+      <div id="done-family-code" style="font-family:Georgia,serif;font-size:34px;font-weight:700;color:var(--ocean);letter-spacing:4px;margin-bottom:16px"></div>
+
+      <div style="font-size:11px;font-weight:800;color:var(--mist);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Barnalyklar</div>
+      <div id="done-child-codes" style="text-align:left"></div>
     </div>
-    <div class="feature-card">
-      <span class="feature-icon">🔥</span>
-      <h3>Dagleg hvatning</h3>
-      <p>Sigurhrina, verðlaun og skjaldakerfi — ef einn dagur gleymdist heldur röðin áfram. Gæði yfir magn.</p>
-    </div>
-    <div class="feature-card sun">
-      <span class="feature-icon">📊</span>
-      <h3>Foreldrar fylgjast með</h3>
-      <p>Mælaborð sýnir framfarir í rauntíma. Afi og amma geta líka fylgst með — með eigin kóða.</p>
-    </div>
-    <div class="feature-card">
-      <span class="feature-icon">🏆</span>
-      <h3>Verðlaunahillan</h3>
-      <p>Þríhyrningur af 15 táknunum — barnið fyllir hann smám saman. Erfiðari tákn krefjast meiri þrautseigju.</p>
-    </div>
-    <div class="feature-card">
-      <span class="feature-icon">🎯</span>
-      <h3>Barnakóði — engin lykilorð</h3>
-      <p>Foreldri stofnar aðgang og fær einfaldan kóða fyrir barnið. Barnið slær hann inn einu sinni — tækið man.</p>
-    </div>
-    <div class="feature-card dark">
-      <span class="feature-icon">🇮🇸</span>
-      <h3>Íslenskt — í eðli sínu</h3>
-      <p>Hannað sérstaklega fyrir íslenskar fjölskyldur. Textasafnið er á íslensku. Allt er á íslensku.</p>
-    </div>
+
+    <button class="btn btn-primary" onclick="goTo('screen-parent-home')">🏠 Opna foreldraaðgang</button>
   </div>
-</section>
+</div>
 
-<!-- ── HOW IT WORKS ── -->
-<section class="how">
-  <h2>Hvernig það <em>virkar</em></h2>
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <h3>Foreldri stofnar</h3>
-      <p>Stofnar aðgang, bætir við börnum og fær einfalt kóða fyrir hvert barn.</p>
+<!-- FAMILY KEY LOGIN -->
+<div id="screen-family-key" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goTo('screen-login')">← Til baka</button>
+    <div class="logo"><div class="logo-icon">U</div> Upphátt</div>
+    <div></div>
+  </div>
+  <div class="scroll-body">
+    <div class="hero" style="background:linear-gradient(135deg,var(--coral),#c94d4d)">
+      <div class="hero-label">Fjölskylda</div>
+      <h1>Sláðu inn fjölskyldulykil 👨‍👩‍👧</h1>
+      <p>Fyrir aðra foreldra, forsjármenn, afa og ömmur.</p>
     </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <h3>Barn skráir sig inn</h3>
-      <p>Slær inn kóðann sinn á síma eða spjaldtölvu. Kemst beint inn á sína síðu.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <h3>Les upphátt á hverjum degi</h3>
-      <p>Velur texta, ýtir á „Byrja" og les upphátt í 15 mínútur. Tíminn mælir.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <h3>Allir fylgjast með</h3>
-      <p>Foreldri, afi, amma — sjá framfarir í rauntíma á mælaborðinu sínu.</p>
+
+    <div class="card">
+      <div class="form-group">
+        <label>Fjölskyldulykill</label>
+        <input id="family-code-input" type="text" placeholder="FAM4161"
+          autocomplete="off" autocapitalize="characters" inputmode="text"
+          style="font-family:Georgia,serif;font-size:28px;font-weight:700;letter-spacing:4px;text-align:center;text-transform:uppercase"
+          oninput="this.value=this.value.toUpperCase()">
+      </div>
+
+      <div id="family-code-error" class="notice" style="color:var(--coral);margin-bottom:10px;text-align:center"></div>
+      <button class="btn" style="background:var(--coral);color:#fff" onclick="familyKeyLogin()">👨‍👩‍👧 Opna fjölskyldu</button>
     </div>
   </div>
-</section>
+</div>
 
-<!-- ── CTA ── -->
-<section class="cta-section" id="cta">
-  <h2>Vertu <em>fyrst</em><br>á listanum</h2>
-  <p>Við erum að þróa Upphátt núna. Skráðu þig og fáðu aðgang fyrst.</p>
-  <div class="cta-form-wrap">
-    <div class="signup-form" id="cta-form">
-      <input class="signup-input" type="email" id="cta-email" placeholder="netfang þitt" autocomplete="email">
-      <button class="signup-btn" onclick="signup('cta')">Skrá mig →</button>
-    </div>
-    <div class="signup-success" id="cta-success">
-      🎉 Frábært! Við látum þig vita þegar við opnum.
-    </div>
-    <p class="signup-note">Ekkert ruslpóstur. Við heldur netfanginu þínu öruggu.</p>
+<!-- FAMILY VIEW -->
+<div id="screen-family-view" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="logoutFamily()">← Út</button>
+    <div class="logo"><div class="logo-icon">U</div> Upphátt</div>
+    <div class="pill" id="family-view-pill">Fjölskylda</div>
   </div>
-</section>
+  <div class="scroll-body">
+    <div class="hero" style="background:linear-gradient(135deg,var(--coral),#c94d4d)">
+      <div class="hero-label">Yfirlit</div>
+      <h1 id="family-view-hero">Fjölskylduyfirlit</h1>
+      <p>Lestrarlotur barnanna birtast hér.</p>
+    </div>
+    <div id="family-view-content">
+      <div class="card"><div class="notice" style="text-align:center;padding:20px">Hleður... ⏳</div></div>
+    </div>
+  </div>
+</div>
+<!-- PARENT LOGIN -->
+<div id="screen-parent-login" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goTo('screen-login')">← Til baka</button>
+    <div class="logo"><div class="logo-icon">U</div> Upphátt</div>
+    <div></div>
+  </div>
+  <div class="scroll-body">
+    <div class="hero purple">
+      <div class="hero-label">Foreldri</div>
+      <h1>Velkomin/n</h1>
+      <p>Skráðu þig inn og fylgstu með í rauntíma.</p>
+    </div>
+    <div class="card">
+      <div class="form-group"><label>Netfang</label><input id="login-email" type="email" autocomplete="email" placeholder="þu@dæmi.is"></div>
+      <div class="form-group"><label>Lykilorð</label><input id="login-pw" type="password" autocomplete="current-password" placeholder="••••••••"></div>
+      <div id="login-error" class="notice" style="color:var(--coral);margin-bottom:10px"></div>
+      <button class="btn btn-primary" onclick="firebaseLogin()">🔑 Skrá inn</button>
+    </div>
+  </div>
+</div>
 
-<!-- ── FOOTER ── -->
-<footer>
-  <div class="footer-logo">Upphátt</div>
-  <div>Þróað á Íslandi · 2026</div>
-  <div>upphátt@upphátt.is</div>
-</footer>
+<!-- CHILD LOGIN -->
+<div id="screen-child-login" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goTo('screen-login')">← Til baka</button>
+    <div class="logo"><div class="logo-icon">U</div> Upphátt</div>
+    <div></div>
+  </div>
+  <div class="scroll-body">
+    <div class="hero green">
+      <div class="hero-label">Barn</div>
+      <h1>Sláðu inn kóðann þinn 🎯</h1>
+      <p>Foreldri þitt gaf þér þennan kóða.</p>
+    </div>
+    <div class="card">
+      <div class="form-group">
+        <label>Kóðinn þinn</label>
+        <input id="child-code-input" type="text" maxlength="6"
+          autocomplete="off" autocapitalize="characters" inputmode="text" enterkeyhint="done"
+          style="font-family:Georgia,serif;font-size:32px;font-weight:700;letter-spacing:6px;text-align:center;text-transform:uppercase"
+          oninput="this.value=this.value.toUpperCase()"
+          readonly
+          ontouchstart="this.removeAttribute('readonly');this.focus();"
+          onclick="this.removeAttribute('readonly');this.focus();"
+          onpaste="return false" ondrop="return false">
+      </div>
+      <div id="child-code-error" class="notice" style="color:var(--coral);text-align:center;margin-bottom:10px"></div>
+      <button class="btn btn-success" onclick="childLogin()">🎯 Skrá mig inn</button>
+    </div>
+    <div style="background:#e8f4fd;border-radius:12px;padding:12px 14px;margin-top:4px;font-size:12px;color:var(--ocean);font-weight:700;text-align:center;">
+      💡 Þú þarft aðeins að slá inn kóðann einu sinni — tækið man eftir þér!
+    </div>
+  </div>
+</div>
 
-<script>
-function signup(form) {
-  const emailEl = document.getElementById(form + '-email');
-  const formEl  = document.getElementById(form + '-form');
-  const succEl  = document.getElementById(form + '-success');
-  const email   = emailEl ? emailEl.value.trim() : '';
+<!-- CHILD HOME -->
+<div id="screen-child-home" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="logout()">← Út</button>
+    <div class="logo"><div class="logo-icon">U</div> Upphátt</div>
+    <div class="pill" id="child-name-pill">Barn</div>
+  </div>
+  <div class="scroll-body">
 
-  if(!email || !email.includes('@')) {
-    emailEl.style.color = '#FF6B6B';
-    emailEl.placeholder = 'Sláðu inn gilt netfang';
-    setTimeout(() => { emailEl.style.color = ''; emailEl.placeholder = 'netfang þitt'; }, 2000);
+    <div class="hero green" id="child-hero-card">
+      <div class="hero-label">Hæ!</div>
+      <h1 id="child-hero">Ertu tilbúinn að lesa? 🌟</h1>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <div id="child-streak" style="display:none;background:rgba(255,184,48,0.25);border:1.5px solid rgba(255,184,48,0.6);border-radius:50px;padding:5px 14px;font-size:13px;font-weight:800;color:#fff">
+          🔥 <span id="streak-num">0</span> daga röð
+        </div>
+        <div id="child-shields" style="display:none;background:rgba(255,255,255,0.2);border-radius:50px;padding:5px 14px;font-size:13px;font-weight:800;color:#fff">
+          🛡️ <span id="shields-num">0</span> frídagar
+        </div>
+      </div>
+    </div>
+
+    <div id="shield-warning" style="display:none;background:#fff3cd;border-radius:14px;padding:14px;margin-bottom:12px;border-left:4px solid var(--sun)">
+      <div style="font-size:13px;font-weight:800;color:#856404">⚠️ Streak í hættu!</div>
+      <div style="font-size:12px;color:#856404;margin-top:3px" id="shield-warning-text">Les í dag til að halda röðinni.</div>
+    </div>
+
+    <div class="card" id="child-week-card">
+      <div style="font-size:11px;font-weight:800;color:var(--mist);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Þessi vika — markmið: 15 mín/dag</div>
+      <div class="week-dots" id="child-week-dots"></div>
+    </div>
+
+    <div id="milestone-card" style="display:none;background:linear-gradient(135deg,var(--sun),#e8900a);border-radius:18px;padding:18px;margin-bottom:12px;text-align:center;color:var(--deep)">
+      <div style="font-size:36px;margin-bottom:6px" id="milestone-icon">🌱</div>
+      <div style="font-family:Georgia,serif;font-size:18px;font-weight:700" id="milestone-title">Verðlaun!</div>
+      <div style="font-size:13px;margin-top:4px;font-weight:600;opacity:.8" id="milestone-text"></div>
+    </div>
+
+    <div class="card" id="setup-card">
+      <div style="font-size:13px;font-weight:800;color:var(--deep);margin-bottom:12px">Setja upp lestrarlotur</div>
+      <div class="form-group">
+        <label>Heiti bókar (valfrjálst)</label>
+        <input id="read-title" type="text" placeholder="t.d. Harry Potter">
+      </div>
+      <div class="form-group">
+        <label>Byrjunarblaðsíða (valfrjálst)</label>
+        <input id="page-start" type="number" min="1" placeholder="t.d. 42" inputmode="numeric">
+      </div>
+      <div style="font-size:11px;font-weight:800;color:var(--deep);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Tímamælir</div>
+      <div class="mode-picker">
+        <button class="mode-btn active" id="mode-down" onclick="setMode('down')">⏳ Niðurtalning<br><span style="font-size:10px;font-weight:600;opacity:.7">15:00 → 0:00</span></button>
+        <button class="mode-btn" id="mode-up" onclick="setMode('up')">⏱ Upptalning<br><span style="font-size:10px;font-weight:600;opacity:.7">0:00 → 15:00+</span></button>
+      </div>
+      <button class="btn btn-primary" onclick="startReading()">🎤 Byrja að lesa</button>
+    </div>
+
+    <div class="card" id="reading-card" style="display:none">
+      <div class="timer-wrap">
+        <div class="timer-big" id="timer-display">15:00</div>
+        <div class="timer-sub"><span class="rec-dot"></span><span id="timer-status">Les upphátt…</span></div>
+      </div>
+      <div style="font-size:11px;color:var(--mist);font-weight:700;text-align:center;margin-bottom:16px" id="audio-status"></div>
+      <button class="btn btn-success" onclick="stopReading()">⏹ Klára lestrarlotur</button>
+      <button class="btn btn-ghost" onclick="cancelReading()" style="margin-top:10px">Hætta við</button>
+    </div>
+
+    <div class="card" id="finish-card" style="display:none">
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:48px" id="finish-emoji">🎉</div>
+        <div style="font-family:Georgia,serif;font-size:22px;font-weight:700;color:var(--deep)" id="finish-title">Frábær lestur!</div>
+        <div style="font-size:13px;color:var(--mist);margin-top:4px" id="finish-sub"></div>
+      </div>
+      <div class="form-group">
+        <label>Hvaða blaðsíðu ertu kominn á? (valfrjálst)</label>
+        <input id="page-end" type="number" min="1" placeholder="t.d. 58" inputmode="numeric">
+      </div>
+      <div id="pages-display" style="text-align:center;font-size:13px;color:var(--moss);font-weight:800;margin-bottom:12px;min-height:20px"></div>
+      <div id="save-error" class="notice" style="color:var(--coral);margin-bottom:8px"></div>
+      <button class="btn btn-primary" onclick="saveSession()">✅ Vista og klára</button>
+      <button class="btn btn-ghost" onclick="skipSave()" style="margin-top:10px">Sleppa blaðsíðutali</button>
+    </div>
+
+    <div id="child-sessions-wrap" style="display:none">
+      <div style="font-size:11px;font-weight:800;color:var(--mist);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Síðustu lotur</div>
+      <div class="card" id="child-sessions-list"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PARENT HOME -->
+<div id="screen-parent-home" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="logout()">← Út</button>
+    <div class="logo"><div class="logo-icon">U</div> Upphátt</div>
+    <div class="pill" id="parent-pill">Foreldri</div>
+  </div>
+  <div class="scroll-body">
+    <div class="hero purple" style="cursor:default">
+      <div class="hero-label">Yfirlit</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <h1 id="parent-hero" style="margin:0">Foreldraaðgangur</h1>
+        <button onclick="toggleCodes()" id="codes-toggle-btn"
+          style="background:rgba(255,255,255,0.2);border:none;border-radius:50px;padding:6px 14px;font-size:12px;font-weight:800;color:white;cursor:pointer;flex-shrink:0;margin-left:10px">
+          🔑 Kóðar
+        </button>
+      </div>
+      <p>Lotur birtast hér strax þegar börnin klára.</p>
+      <div id="codes-panel" style="display:none;margin-top:12px;background:rgba(255,255,255,0.15);border-radius:12px;padding:12px">
+        <div id="codes-list"></div>
+      </div>
+    </div>
+
+    <div id="parent-content">
+      <div class="card"><div class="notice" style="text-align:center;padding:20px">Hleður gögn... ⏳</div></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut }
+  from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js';
+import { getFirestore, collection, addDoc, doc, getDoc, setDoc, onSnapshot, query, where, serverTimestamp }
+  from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
+import { getStorage, ref, uploadBytes, getDownloadURL }
+  from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-storage.js';
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyAgTY3Uxd9_ZxixjqLj-sH8V3OhFAzg6DU',
+  authDomain: 'lesum-22e85.firebaseapp.com',
+  projectId: 'lesum-22e85',
+  storageBucket: 'lesum-22e85.firebasestorage.app',
+  messagingSenderId: '204392598388',
+  appId: '1:204392598388:web:2dbbe3f476cd78d2ffba21'
+};
+
+const app     = initializeApp(firebaseConfig);
+const auth    = getAuth(app);
+const db      = getFirestore(app);
+const storage = getStorage(app);
+function normalizeChildrenInput(raw) {
+  return raw
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+async function generateUniqueFamilyId() {
+  for (let i = 0; i < 20; i++) {
+    const familyId = 'FAM' + Math.floor(1000 + Math.random() * 9000);
+    const snap = await getDoc(doc(db, 'codes', familyId));
+    if (!snap.exists()) return familyId;
+  }
+  throw new Error('Tókst ekki að búa til fjölskyldulykil');
+}
+
+async function generateUniqueChildCode(name) {
+  const clean = (name || 'BARN')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Za-z]/g, '')
+    .toUpperCase();
+
+  const prefix = (clean + 'XXX').slice(0, 3);
+
+  for (let i = 0; i < 30; i++) {
+    const code = prefix + Math.floor(1000 + Math.random() * 9000);
+    const snap = await getDoc(doc(db, 'codes', code));
+    if (!snap.exists()) return code;
+  }
+  throw new Error('Tókst ekki að búa til barnalykil');
+}
+let _registering = false;
+window.doRegister = async function() {
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pw = document.getElementById('reg-pw').value;
+  const childrenRaw = document.getElementById('reg-children').value.trim();
+  const err = document.getElementById('reg-error');
+
+  err.textContent = '';
+
+  if (!name) { err.textContent = 'Sláðu inn nafn.'; return; }
+  if (!email) { err.textContent = 'Sláðu inn netfang.'; return; }
+  if (pw.length < 6) { err.textContent = 'Lykilorð þarf að vera a.m.k. 6 stafir.'; return; }
+
+  const childNames = normalizeChildrenInput(childrenRaw);
+  if (!childNames.length) { err.textContent = 'Sláðu inn amk eitt barn.'; return; }
+
+  try {
+    _registering = true;	
+    const cred = await createUserWithEmailAndPassword(auth, email, pw);
+    const uid = cred.user.uid;
+
+    const familyId = await generateUniqueFamilyId();
+
+    const children = [];
+    for (const childName of childNames) {
+      const childCode = await generateUniqueChildCode(childName);
+      children.push({
+        name: childName,
+        key: childCode,
+        code: childCode
+      });
+
+      await setDoc(doc(db, 'codes', childCode), {
+        type: 'child',
+        familyId,
+        childKey: childCode,
+        childName,
+        createdAt: serverTimestamp()
+      });
+    }
+
+    await setDoc(doc(db, 'codes', familyId), {
+      type: 'family',
+      familyId,
+      createdAt: serverTimestamp()
+    });
+
+    await setDoc(doc(db, 'families', familyId), {
+      familyId,
+      ownerUid: uid,
+      ownerName: name,
+      ownerEmail: email,
+      children,
+      createdAt: serverTimestamp()
+    });
+
+    await setDoc(doc(db, 'users', uid), {
+      name,
+      email,
+      familyId,
+      familyCode: familyId,
+      role: 'parent',
+      children,
+      createdAt: serverTimestamp()
+    });
+
+    S.role = 'parent';
+    S.familyId = familyId;
+    S.parentName = name.split(' ')[0];
+    window._parentChildren = children;
+
+    document.getElementById('done-family-code').textContent = familyId;
+    document.getElementById('done-child-codes').innerHTML = children.map(c => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid #eef3f9">
+        <div style="font-size:14px;font-weight:800;color:var(--deep)">${c.name}</div>
+        <div style="font-family:Georgia,serif;font-size:22px;font-weight:700;color:var(--moss);letter-spacing:3px">${c.code}</div>
+      </div>
+    `).join('');
+
+    _registering = false;	
+    goTo('screen-register-done');
+
+  } catch (e) {
+    _registering = false;	
+    err.textContent = e.message || 'Villa við nýskráningu.';
+  }
+};
+window.familyKeyLogin = async function() {
+  const code = document.getElementById('family-code-input').value.trim().toUpperCase();
+  const err = document.getElementById('family-code-error');
+  err.textContent = '';
+
+  if (!code) {
+    err.textContent = 'Sláðu inn fjölskyldulykil.';
     return;
   }
 
-  // Hér myndi vera API kall á póstlista (Mailchimp, ConvertKit o.fl.)
-  // Sem dæmi: fetch('https://your-api/subscribe', { method:'POST', body: JSON.stringify({email}) })
+  try {
+    const codeSnap = await getDoc(doc(db, 'codes', code));
+    if (!codeSnap.exists() || codeSnap.data().type !== 'family') {
+      err.textContent = 'Fjölskyldulykill fannst ekki.';
+      return;
+    }
 
-  formEl.style.display = 'none';
-  succEl.style.display = 'block';
+    const familyId = codeSnap.data().familyId;
+    const famSnap = await getDoc(doc(db, 'families', familyId));
+    if (!famSnap.exists()) {
+      err.textContent = 'Fjölskylda fannst ekki.';
+      return;
+    }
 
-  // Ef báðir formarnir eru til — sýna success á báðum
-  ['hero','cta'].forEach(f => {
-    const fe = document.getElementById(f+'-form');
-    const se = document.getElementById(f+'-success');
-    if(fe) fe.style.display = 'none';
-    if(se) se.style.display = 'block';
+    S.role = 'family';
+    S.familyId = familyId;
+    window._familyChildren = famSnap.data().children || [];
+
+    localStorage.setItem('upphatt_family', JSON.stringify({ familyId }));
+
+    document.getElementById('family-view-pill').textContent = familyId;
+    document.getElementById('family-view-hero').textContent = `Fjölskylda ${familyId}`;
+
+    startFamilyViewListener();
+    goTo('screen-family-view');
+
+  } catch (e) {
+    err.textContent = e.message || 'Villa við innskráningu.';
+  }
+};
+function startFamilyViewListener() {
+  if (S.familyUnsub) { S.familyUnsub(); S.familyUnsub = null; }
+
+  const q = query(collection(db, 'sessions'), where('familyId', '==', S.familyId));
+  S.familyUnsub = onSnapshot(q, snap => {
+    const sessions = snap.docs.map(d => ({ _docId: d.id, ...d.data() }))
+      .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+    const children = window._familyChildren || [];
+    const root = document.getElementById('family-view-content');
+
+    if (!children.length) {
+      root.innerHTML = '<div class="card"><div class="notice" style="text-align:center;padding:20px">Engin börn skráð.</div></div>';
+      return;
+    }
+
+    root.innerHTML = children.map(child => {
+      const list = sessions.filter(s => s.childKey === child.key || s.childKey === child.code);
+      const totalMins = list.reduce((a, s) => a + Math.floor((s.seconds || 0) / 60), 0);
+      const totalPages = list.reduce((a, s) => a + (s.pagesRead || 0), 0);
+      const streak = getStreak(list);
+
+      return `
+        <div class="card" style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <div style="font-family:Georgia,serif;font-size:18px;font-weight:700;color:var(--deep)">${child.name}</div>
+            ${streak > 1 ? `<div class="streak-badge">🔥 ${streak}</div>` : ''}
+          </div>
+
+          <div class="stat-row">
+            <div class="stat-box"><div class="stat-val">${totalMins}</div><div class="stat-lbl">Mínútur</div></div>
+            <div class="stat-box"><div class="stat-val">${list.length}</div><div class="stat-lbl">Lotur</div></div>
+            <div class="stat-box"><div class="stat-val">${totalPages}</div><div class="stat-lbl">Blaðsíður</div></div>
+          </div>
+
+          <div class="week-dots" id="family-week-${child.key}"></div>
+        </div>
+      `;
+    }).join('');
+
+    setTimeout(() => {
+      children.forEach(child => {
+        const list = sessions.filter(s => s.childKey === child.key || s.childKey === child.code);
+        renderWeekDots(list, `family-week-${child.key}`);
+      });
+    }, 0);
   });
 }
 
-// Enter key support
-document.querySelectorAll('.signup-input').forEach(input => {
-  input.addEventListener('keydown', e => {
-    if(e.key === 'Enter') {
-      const form = input.id.replace('-email', '');
-      signup(form);
-    }
-  });
-});
-</script>
+window.logoutFamily = function() {
+  if (S.familyUnsub) { S.familyUnsub(); S.familyUnsub = null; }
+  localStorage.removeItem('upphatt_family');
+  S.role = null;
+  S.familyId = null;
+  goTo('screen-login');
+};
 
+window._appState = {
+  role:        null,
+  familyId:    null,
+  childKey:    null,
+  childName:   null,
+  parentName:  null,
+  familyUnsub: null,
+  sessions:    [],
+  timerMode:   'down',
+  timerInterval: null,
+  readingStartMs: null,
+  elapsedSecs:  0,
+  pendingSession: null,
+  audioStream:  null,
+  audioSnippets: {},
+  snippetTimers: [],
+  expandedChildren: {}
+};
+
+const S = window._appState;
+const TARGET = 15 * 60;
+
+// ── Nav ──
+window.goTo = function(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+};
+
+// ── Helpers ──
+function fmtTime(s){ return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
+function makeDateKey(d){ return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; }
+function formatLabel(v){
+  const d = v?.toDate ? v.toDate() : (typeof v==='number' ? new Date(v) : null);
+  if(!d || isNaN(d)) return '';
+  return d.toLocaleString('is-IS',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+}
+function getMonday(date=new Date()){
+  const d=new Date(date); d.setHours(12,0,0,0);
+  const day=d.getDay(); d.setDate(d.getDate()+(day===0?-6:1-day)); return d;
+}
+function renderWeekDots(sessions, containerId){
+  const el=document.getElementById(containerId); if(!el) return;
+  const mon=getMonday();
+  const labels=['Mán','Þri','Mið','Fim','Fös','Lau','Sun'];
+  el.innerHTML=labels.map((lbl,i)=>{
+    const d=new Date(mon); d.setDate(mon.getDate()+i);
+    const key=makeDateKey(d);
+    const mins=sessions.filter(s=>s.date===key).reduce((a,s)=>a+Math.floor((s.seconds||0)/60),0);
+    const cls=mins>=15?'full':mins>0?'partial':'none';
+    return `<div class="day-dot ${cls}"><div>${lbl}</div><div>${mins>0?mins+'m':'—'}</div></div>`;
+  }).join('');
+}
+function getStreak(sessions){
+  if(!sessions.length) return 0;
+  let streak=0; const d=new Date();
+  for(let i=0;i<90;i++){
+    const k=makeDateKey(d);
+    if(sessions.some(s=>s.date===k&&(s.seconds||0)>=60)){ streak++; d.setDate(d.getDate()-1); }
+    else if(i===0){ d.setDate(d.getDate()-1); }
+    else break;
+  }
+  return streak;
+}
+
+// ── Timer mode ──
+window.setMode = function(mode){
+  S.timerMode=mode;
+  document.getElementById('mode-down').className='mode-btn'+(mode==='down'?' active':'');
+  document.getElementById('mode-up').className='mode-btn'+(mode==='up'?' active':'');
+  document.getElementById('timer-display').textContent=mode==='down'?'15:00':'0:00';
+};
+
+// ── Child login ──
+window.childLogin = async function(){
+  const code=document.getElementById('child-code-input').value.trim().toUpperCase();
+  const err=document.getElementById('child-code-error');
+  err.textContent='';
+  if(code.length<4){ err.textContent='Sláðu inn kóðann þinn.'; return; }
+  try {
+    document.getElementById('child-code-input').disabled=true;
+    const snap=await getDoc(doc(db,'codes',code));
+    if(!snap.exists()){
+      err.textContent='Kóðinn fannst ekki — athugaðu með foreldri.';
+      document.getElementById('child-code-input').disabled=false; return;
+    }
+    const data=snap.data();
+    S.role=       'child';
+    S.familyId=   data.familyId;
+    S.childKey=   data.childKey;
+    S.childName=  data.childName;
+    localStorage.setItem('upphatt_child', JSON.stringify({
+      familyId:data.familyId, childKey:data.childKey, childName:data.childName, code
+    }));
+    setupChildHome();
+    goTo('screen-child-home');
+  } catch(e){
+    err.textContent='Villa: '+e.message;
+    document.getElementById('child-code-input').disabled=false;
+  }
+};
+
+function setupChildHome(){
+  document.getElementById('child-name-pill').textContent=S.childName;
+  document.getElementById('child-hero').textContent=`Halló, ${S.childName} 🌟`;
+  loadChildSessions();
+}
+
+// ── Hljóðviðbrögð ──
+function playSound(type) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = ctx.currentTime;
+    if (type === 'done') {
+      [[523,0],[659,0.15],[784,0.3],[1047,0.5]].forEach(([freq,delay]) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = freq; osc.type = 'sine';
+        gain.gain.setValueAtTime(0.3, now+delay);
+        gain.gain.exponentialRampToValueAtTime(0.001, now+delay+0.4);
+        osc.start(now+delay); osc.stop(now+delay+0.5);
+      });
+    } else if (type === 'milestone') {
+      [[523,0],[659,0.1],[784,0.2],[1047,0.35],[1047,0.55]].forEach(([freq,delay]) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = freq; osc.type = 'triangle';
+        gain.gain.setValueAtTime(0.35, now+delay);
+        gain.gain.exponentialRampToValueAtTime(0.001, now+delay+0.5);
+        osc.start(now+delay); osc.stop(now+delay+0.6);
+      });
+    } else if (type === 'streak') {
+      [[392,0],[523,0.2],[659,0.4],[784,0.6],[1047,0.8]].forEach(([freq,delay]) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = freq; osc.type = 'sine';
+        gain.gain.setValueAtTime(0.25, now+delay);
+        gain.gain.exponentialRampToValueAtTime(0.001, now+delay+0.6);
+        osc.start(now+delay); osc.stop(now+delay+0.7);
+      });
+    }
+  } catch(e) {}
+}
+
+// ── Milestones ──
+const MILESTONES = [
+  { count:1,  icon:'🌱', title:'Fyrsta skrefið!',    text:'Þú kláraðir fyrstu lotuna!' },
+  { count:5,  icon:'⭐', title:'Fimm lotur!',         text:'Þú ert að verða lesari!' },
+  { count:10, icon:'🦁', title:'Sterkur lesari!',     text:'Tíu lotur — stórkostlegt!' },
+  { count:20, icon:'🏆', title:'Meistarinn!',         text:'Tuttugu lotur — þú ert snillingur!' },
+  { count:50, icon:'🚀', title:'Lestrarhetja!',       text:'Fimmtíu lotur — ótrúlegt!' },
+];
+
+function checkMilestone(totalSessions) {
+  const m = MILESTONES.find(m => m.count === totalSessions);
+  if (!m) return;
+  const card = document.getElementById('milestone-card');
+  document.getElementById('milestone-icon').textContent  = m.icon;
+  document.getElementById('milestone-title').textContent = m.title;
+  document.getElementById('milestone-text').textContent  = m.text;
+  card.style.display = '';
+  setTimeout(() => { card.style.display = 'none'; }, 8000);
+  setTimeout(() => playSound('milestone'), 300);
+}
+
+// ── Skjaldakerfi ──
+function getShields() {
+  return parseInt(localStorage.getItem('upphatt_shields_' + S.childKey) || '0');
+}
+function setShields(n) {
+  localStorage.setItem('upphatt_shields_' + S.childKey, Math.max(0, n));
+}
+function checkAndGrantShield(streak) {
+  const given  = parseInt(localStorage.getItem('upphatt_shields_given_' + S.childKey) || '0');
+  const earned = Math.floor(streak / 7);
+  if (earned > given) {
+    const newShields = earned - given;
+    localStorage.setItem('upphatt_shields_given_' + S.childKey, earned);
+    setShields(getShields() + newShields);
+    return newShields;
+  }
+  return 0;
+}
+
+function getStreakWithShields(sessions) {
+  if (!sessions.length) return 0;
+  const shields = getShields();
+  let streak = 0;
+  let shieldsUsed = 0;
+  const d = new Date();
+  for (let i = 0; i < 180; i++) {
+    const k = makeDateKey(d);
+    const hasSession = sessions.some(s => s.date === k && (s.seconds||0) >= 60);
+    if (hasSession) {
+      streak++; d.setDate(d.getDate() - 1);
+    } else if (i === 0) {
+      d.setDate(d.getDate() - 1);
+    } else if (shieldsUsed < shields) {
+      shieldsUsed++; streak++; d.setDate(d.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
+// ── Hlaða barnaötu ──
+// ── LAGFÆRING #1: Aðeins EIN Firestore fyrirspurn fyrir barnið ──
+// Við notum familyId + childKey filter beint — engin sérstök 'children' undirmappa
+function loadChildSessions() {
+  const q = query(
+    collection(db, 'sessions'),
+    where('familyId', '==', S.familyId),
+    where('childKey', '==', S.childKey)
+  );
+  onSnapshot(q, snap => {
+    const sessions = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (b.timestamp||0) - (a.timestamp||0));
+    const streak  = getStreakWithShields(sessions);
+    const shields = getShields();
+    renderWeekDots(sessions, 'child-week-dots');
+    if (streak > 0) {
+      document.getElementById('child-streak').style.display = 'inline-flex';
+      document.getElementById('streak-num').textContent = streak;
+    } else {
+      document.getElementById('child-streak').style.display = 'none';
+    }
+    if (shields > 0) {
+      document.getElementById('child-shields').style.display = 'inline-flex';
+      document.getElementById('shields-num').textContent = shields;
+    } else {
+      document.getElementById('child-shields').style.display = 'none';
+    }
+    const newShields = checkAndGrantShield(streak);
+    if (newShields > 0) setTimeout(() => playSound('streak'), 300);
+    const today     = makeDateKey(new Date());
+    const yesterday = makeDateKey(new Date(Date.now() - 86400000));
+    const readToday     = sessions.some(s => s.date === today     && (s.seconds||0) >= 60);
+    const readYesterday = sessions.some(s => s.date === yesterday && (s.seconds||0) >= 60);
+    const warningEl   = document.getElementById('shield-warning');
+    const warningText = document.getElementById('shield-warning-text');
+    if (!readToday && readYesterday && streak > 1) {
+      warningEl.style.display = '';
+      warningText.textContent = shields > 0
+        ? `Þú átt ${shields} frídaga — ef þú gleymir er skjöldurinn notaður sjálfkrafa.`
+        : `Les í dag til að halda ${streak} daga röðinni!`;
+    } else {
+      warningEl.style.display = 'none';
+    }
+    if (sessions.length) {
+      document.getElementById('child-sessions-wrap').style.display = '';
+      document.getElementById('child-sessions-list').innerHTML =
+        sessions.slice(0, 5).map(s => `
+          <div class="session">
+            <div class="session-title">${s.title||'Lestur'}${s.pagesRead ? ` · ${s.pagesRead} bls.` : ''}</div>
+            <div class="session-meta">${formatLabel(s.createdAt)||s.date||''} · ${fmtTime(s.seconds||0)}</div>
+          </div>`).join('');
+    }
+  }, e => console.error('Child listener villa:', e));
+}
+
+// ══════════════════════════════════════════════════════════
+// ── START READING ─────────────────────────────────────────
+// ══════════════════════════════════════════════════════════
+window.startReading = function(){
+  S.pendingSession = {
+    title:     document.getElementById('read-title').value.trim() || 'Lestur',
+    pageStart: parseInt(document.getElementById('page-start').value, 10) || null
+  };
+  S.elapsedSecs    = 0;
+  S.readingStartMs = Date.now();
+  S.audioSnippets  = {
+    min1:  { chunks: [], mimeType: '' },
+    min5:  { chunks: [], mimeType: '' },
+    min9:  { chunks: [], mimeType: '' },
+    min13: { chunks: [], mimeType: '' }
+  };
+  S.snippetTimers.forEach(t => clearTimeout(t));
+  S.snippetTimers = [];
+
+  document.getElementById('setup-card').style.display   = 'none';
+  document.getElementById('reading-card').style.display = '';
+  document.getElementById('finish-card').style.display  = 'none';
+
+  const disp = document.getElementById('timer-display');
+  disp.textContent  = S.timerMode === 'down' ? '15:00' : '0:00';
+  disp.className    = 'timer-big running';
+  document.getElementById('timer-status').textContent =
+    S.timerMode === 'down' ? 'Les upphátt — tíminn líður niður…' : 'Les upphátt…';
+  document.getElementById('audio-status').textContent = '';
+
+  if (S.timerInterval) clearInterval(S.timerInterval);
+  S.timerInterval = setInterval(() => {
+    S.elapsedSecs = Math.floor((Date.now() - S.readingStartMs) / 1000);
+    const display = S.timerMode === 'down' ? Math.max(0, TARGET - S.elapsedSecs) : S.elapsedSecs;
+    disp.textContent = fmtTime(display);
+    if (S.elapsedSecs >= TARGET) {
+      disp.className = 'timer-big done';
+      document.getElementById('timer-status').textContent = 'Markmið náð! 🎉';
+    }
+  }, 500);
+
+  startAudio();
+};
+
+async function startAudio(){
+  try {
+    S.audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const schedule = [
+      { label: 'min1',  ms: 1  * 60 * 1000 },
+      { label: 'min5',  ms: 5  * 60 * 1000 },
+      { label: 'min9',  ms: 9  * 60 * 1000 },
+      { label: 'min13', ms: 13 * 60 * 1000 },
+    ];
+    schedule.forEach(({ label, ms }) => {
+      const t = setTimeout(() => { recordSnippet(label, 15000); }, ms);
+      S.snippetTimers.push(t);
+    });
+    document.getElementById('audio-status').textContent = '🎤 Tekur upp við mín. 1, 5, 9 og 13';
+  } catch(e){
+    document.getElementById('audio-status').textContent = '🔇 Hljóðupptaka ekki í boði';
+  }
+}
+
+function getSupportedMimeType(){
+  const types = ['audio/mp4','audio/aac','audio/webm;codecs=opus','audio/webm','audio/ogg'];
+  for (const t of types) {
+    try { if (MediaRecorder.isTypeSupported(t)) return t; } catch(e) {}
+  }
+  return '';
+}
+
+function recordSnippet(label, duration){
+  if (!S.audioStream) return;
+  const chunks   = [];
+  const mimeType = getSupportedMimeType();
+  let rec;
+  try {
+    rec = mimeType ? new MediaRecorder(S.audioStream, { mimeType }) : new MediaRecorder(S.audioStream);
+  } catch(e) {
+    try { rec = new MediaRecorder(S.audioStream); } catch(e2) { return; }
+  }
+  rec.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+  rec.onstop = () => {
+    S.audioSnippets[label] = { chunks, mimeType: rec.mimeType || mimeType || 'audio/webm' };
+  };
+  rec.start(1000);
+  setTimeout(() => { if (rec.state !== 'inactive') try { rec.stop(); } catch(e) {} }, duration);
+}
+
+function stopAudio(){
+  S.snippetTimers.forEach(t => clearTimeout(t));
+  S.snippetTimers = [];
+  if (S.audioStream) {
+    S.audioStream.getTracks().forEach(t => t.stop());
+    S.audioStream = null;
+  }
+}
+
+window.stopReading = function(){
+  if (!S.readingStartMs) return;
+  clearInterval(S.timerInterval); S.timerInterval = null;
+  S.elapsedSecs = Math.floor((Date.now() - S.readingStartMs) / 1000);
+  stopAudio();
+  if (S.elapsedSecs < 60) {
+    if (confirm('Þú lasir í minna en 1 mínútu — lota verður ekki vistuð. Hætta við?')) {
+      cancelReading(); return;
+    }
+  }
+  document.getElementById('reading-card').style.display = 'none';
+  document.getElementById('finish-card').style.display  = '';
+  const mins = Math.floor(S.elapsedSecs / 60);
+  document.getElementById('finish-emoji').textContent  = mins >= 15 ? '🏆' : mins >= 5 ? '⭐' : '👍';
+  document.getElementById('finish-title').textContent  = mins >= 15 ? 'Frábær lestur!' : mins >= 5 ? 'Vel gert!' : 'Byrjunin er góð!';
+  document.getElementById('finish-sub').textContent    = `${fmtTime(S.elapsedSecs)} lesið — skráðu blaðsíðuna til að rekja framfarir`;
+  setTimeout(() => playSound(mins >= 15 ? 'streak' : 'done'), 400);
+  document.getElementById('page-end').oninput = function(){
+    const start = parseInt(document.getElementById('page-start').value, 10);
+    const end   = parseInt(this.value, 10);
+    const pd    = document.getElementById('pages-display');
+    if (start && end && end > start) pd.textContent = `📖 ${end - start} blaðsíður lesnar!`;
+    else pd.textContent = '';
+  };
+};
+
+window.cancelReading = function(){
+  clearInterval(S.timerInterval); S.timerInterval = null;
+  stopAudio();
+  S.readingStartMs = null; S.elapsedSecs = 0; S.pendingSession = null;
+  S.audioSnippets = {};
+  document.getElementById('reading-card').style.display = 'none';
+  document.getElementById('finish-card').style.display  = 'none';
+  document.getElementById('setup-card').style.display   = '';
+  document.getElementById('timer-display').textContent  = S.timerMode === 'down' ? '15:00' : '0:00';
+  document.getElementById('timer-display').className    = 'timer-big';
+};
+
+// ══════════════════════════════════════════════════════════
+// ── VISTA LOTU ────────────────────────────────────────────
+// ── LAGFÆRING #2: Vista AÐEINS í 'sessions' collection ───
+// ── Engin undirmappa, engin tvöföldun ─────────────────────
+// ══════════════════════════════════════════════════════════
+async function doSaveSession(pageEnd){
+  const err = document.getElementById('save-error');
+  err.textContent = 'Vistar...';
+
+  try {
+    const now = new Date();
+    const ts  = now.getTime();
+
+    const clipDefs = [
+      { label: 'min1',  fileName: 'hljod_1'  },
+      { label: 'min5',  fileName: 'hljod_5'  },
+      { label: 'min9',  fileName: 'hljod_9'  },
+      { label: 'min13', fileName: 'hljod_13' },
+    ];
+
+    const audioPaths = {};
+    let uploadCount  = 0;
+
+    for (const { label, fileName } of clipDefs) {
+      const snippet = S.audioSnippets[label];
+      if (!snippet || !snippet.chunks || snippet.chunks.length === 0) {
+        audioPaths[label] = null;
+        continue;
+      }
+      try {
+        const mimeType  = snippet.mimeType || 'audio/webm';
+        const ext       = mimeType.includes('mp4') ? 'mp4' : mimeType.includes('ogg') ? 'ogg' : 'webm';
+        const blob      = new Blob(snippet.chunks, { type: mimeType });
+        // ── LAGFÆRING #3: Storage path — ekkert 'children/' undirskipulag ──
+        // Allar klippurnar fara í: recordings/{familyId}/{childKey}/{timestamp}/
+        const path      = `recordings/${S.familyId}/${S.childKey}/${ts}/${fileName}.${ext}`;
+        await uploadBytes(ref(storage, path), blob, { contentType: mimeType });
+        audioPaths[label] = path;
+        uploadCount++;
+      } catch(e) {
+        console.error(`Storage villa (${label}):`, e);
+        audioPaths[label] = null;
+      }
+    }
+
+    if (uploadCount > 0) err.textContent = `🎤 ${uploadCount} hljóðklippum vistað!`;
+
+    // ── LAGFÆRING #4: Vista AÐEINS í eina collection: 'sessions' ──
+    // Aldrei nota addDoc á undirmöppur eins og 'families/.../sessions'
+    await addDoc(collection(db, 'sessions'), {
+      familyId:        S.familyId,
+      childKey:        S.childKey,
+      childName:       S.childName,
+      title:           S.pendingSession?.title || 'Lestur',
+      pageStart:       S.pendingSession?.pageStart || null,
+      pageEnd:         pageEnd || null,
+      pagesRead:       (S.pendingSession?.pageStart && pageEnd)
+                         ? pageEnd - S.pendingSession.pageStart
+                         : null,
+      seconds:         S.elapsedSecs,
+      timerMode:       S.timerMode,
+      hasAudio:        uploadCount > 0,
+      audioPath_min1:  audioPaths.min1  || null,
+      audioPath_min5:  audioPaths.min5  || null,
+      audioPath_min9:  audioPaths.min9  || null,
+      audioPath_min13: audioPaths.min13 || null,
+      audioPath:       audioPaths.min1 || audioPaths.min5 || audioPaths.min9 || audioPaths.min13 || null,
+      timestamp:       ts,
+      date:            makeDateKey(now),
+      createdAt:       serverTimestamp()
+    });
+
+    const myCount = (S.sessions||[]).filter(s => s.childKey === S.childKey).length + 1;
+    checkMilestone(myCount);
+    finishReset();
+
+  } catch(e) {
+    err.textContent = 'Ekki tókst að vista: ' + e.message;
+    console.error(e);
+  }
+}
+
+window.saveSession = function(){
+  const pageEnd = parseInt(document.getElementById('page-end').value, 10) || null;
+  doSaveSession(pageEnd);
+};
+window.skipSave = function(){ doSaveSession(null); };
+
+function finishReset(){
+  S.pendingSession = null; S.readingStartMs = null; S.audioSnippets = {};
+  document.getElementById('finish-card').style.display  = 'none';
+  document.getElementById('setup-card').style.display   = '';
+  document.getElementById('read-title').value           = '';
+  document.getElementById('page-start').value           = '';
+  document.getElementById('page-end').value             = '';
+  document.getElementById('pages-display').textContent  = '';
+  document.getElementById('save-error').textContent     = '';
+  document.getElementById('timer-display').textContent  = S.timerMode === 'down' ? '15:00' : '0:00';
+  document.getElementById('timer-display').className    = 'timer-big';
+}
+
+// ── Parent login ──
+window.firebaseLogin = async function(){
+  const email = document.getElementById('login-email').value.trim();
+  const pw    = document.getElementById('login-pw').value;
+  const err   = document.getElementById('login-error');
+  err.textContent = '';
+  try {
+    document.getElementById('login-email').disabled = true;
+    document.getElementById('login-pw').disabled    = true;
+    await signInWithEmailAndPassword(auth, email, pw);
+  } catch(e) {
+    err.textContent = 'Innskráning mistókst — athugaðu netfang og lykilorð.';
+    document.getElementById('login-email').disabled = false;
+    document.getElementById('login-pw').disabled    = false;
+  }
+};
+
+// ── Auth state ──
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    if (_registering) return;
+    try {
+      const snap    = await getDoc(doc(db, 'users', user.uid));
+      const profile = snap.exists() ? snap.data() : null;
+
+      S.role       = 'parent';
+      S.familyId   = profile?.familyId || user.uid;
+      S.parentName = (profile?.name || 'Foreldri').split(' ')[0];
+
+      window._parentChildren   = profile?.children || [];
+      window._expandedChildren = {};
+
+      document.getElementById('parent-pill').textContent = S.parentName;
+      document.getElementById('parent-hero').textContent = `Góðan dag, ${S.parentName}`;
+
+      if (profile?.children) {
+        document.getElementById('codes-list').innerHTML =
+          profile.children.map(c => `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.15)">
+              <div style="font-size:13px;font-weight:800;color:white">👦 ${c.name}</div>
+              <div style="font-family:Georgia,serif;font-size:20px;font-weight:700;color:rgba(255,255,255,0.9);letter-spacing:3px">${c.code || ''}</div>
+            </div>`).join('') +
+          (profile.familyCode ? `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;margin-top:2px">
+              <div style="font-size:12px;font-weight:800;color:rgba(255,255,255,0.7)">👨‍👩‍👦 Fjölskyldukóði</div>
+              <div style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:rgba(255,255,255,0.85);letter-spacing:2px">${profile.familyCode}</div>
+            </div>` : '');
+      }
+
+      startFamilyListener();
+      goTo('screen-parent-home');
+    } catch (e) {
+      console.error('Auth villa:', e);
+    }
+    return;
+  }
+
+  if (S.familyUnsub) {
+    S.familyUnsub();
+    S.familyUnsub = null;
+  }
+
+  S.sessions = [];
+
+  const saved = localStorage.getItem('upphatt_child');
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      S.role      = 'child';
+      S.familyId  = data.familyId;
+      S.childKey  = data.childKey;
+      S.childName = data.childName;
+      setupChildHome();
+      goTo('screen-child-home');
+      return;
+    } catch (e) {
+      localStorage.removeItem('upphatt_child');
+    }
+  }
+
+  const savedFamily = localStorage.getItem('upphatt_family');
+  if (savedFamily) {
+    try {
+      const data = JSON.parse(savedFamily);
+      const famSnap = await getDoc(doc(db, 'families', data.familyId));
+
+      if (famSnap.exists()) {
+        S.role = 'family';
+        S.familyId = data.familyId;
+        window._familyChildren = famSnap.data().children || [];
+        document.getElementById('family-view-pill').textContent = data.familyId;
+        document.getElementById('family-view-hero').textContent = `Fjölskylda ${data.familyId}`;
+        startFamilyViewListener();
+        goTo('screen-family-view');
+        return;
+      }
+    } catch (e) {
+      localStorage.removeItem('upphatt_family');
+    }
+  }
+
+  goTo('screen-login');
+});
+
+// ── Family listener ──
+// ── LAGFÆRING #5: Aðeins EIN onSnapshot — á 'sessions' collection ──
+// Engar tvöfaldar queries, engar undirmöppur
+function startFamilyListener(){
+  if (S.familyUnsub) { S.familyUnsub(); S.familyUnsub = null; }
+  const q = query(collection(db, 'sessions'), where('familyId', '==', S.familyId));
+  S.familyUnsub = onSnapshot(q, snap => {
+    S.sessions = snap.docs.map(d => ({ _docId: d.id, ...d.data() }))
+      .sort((a, b) => (b.timestamp||0) - (a.timestamp||0));
+    renderParentHome();
+  }, e => console.error('Family listener villa:', e));
+}
+
+// ── PARENT HOME ──
+// ── LAGFÆRING #6: allKeys byggist KUN á childKey úr Firestore gögnum ──
+// Þetta kemur í veg fyrir tvöfalt barn ef profile.key != childKey í sessions
+function renderParentHome() {
+  const root  = document.getElementById('parent-content');
+  const today = makeDateKey(new Date());
+  const mon   = getMonday();
+
+  // Hópa lotur eftir childKey
+  const groups = {};
+  S.sessions.forEach(s => {
+    const key = s.childKey;
+    if (!key) return;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(s);
+  });
+
+  // ── LYKILLAGFÆRING: nota KUN childKey úr Firestore — EKKI sameina við profile.children ──
+  // Þetta kemur í veg fyrir að sama barn birtist tvisvar ef profile.key er öðruvísi stafsettur
+  const sessionKeys = Object.keys(groups);
+
+  // Bætum við börnum úr profile sem hafa ENGAR lotur (svo foreldri sjái þau)
+  // En AÐEINS ef childKey passar nákvæmlega — notum childKey (ekki name) sem auðkenni
+  const profileChildren = window._parentChildren || [];
+  const allKeys = [...new Set([
+    ...sessionKeys,
+    ...profileChildren.map(c => c.key).filter(k => k && !sessionKeys.includes(k))
+  ])];
+
+  if (!allKeys.length) {
+    root.innerHTML = `
+      <div style="background:#fff;border-radius:18px;padding:32px 20px;text-align:center;box-shadow:var(--card-shadow)">
+        <div style="font-size:40px;margin-bottom:12px">📖</div>
+        <div style="font-size:15px;font-weight:700;color:var(--deep)">Engar lotur enn</div>
+        <div style="font-size:13px;color:var(--mist);margin-top:6px">Þegar barn klárar lestur birtist hún hér strax</div>
+      </div>`;
+    return;
+  }
+
+  const DAYS = ['Mán','Þri','Mið','Fim','Fös','Lau','Sun'];
+
+  const childCards = allKeys.map(key => {
+    const list       = groups[key] || [];
+    // Sækja nafn: fyrst úr lotur, svo úr profile
+    const profChild  = profileChildren.find(c => c.key === key);
+    const childName  = list[0]?.childName || profChild?.name || key;
+    const readToday  = list.some(s => s.date === today && (s.seconds||0) >= 60);
+    const streak     = getStreak(list);
+    const isExpanded = !!(window._expandedChildren && window._expandedChildren[key]);
+
+    const weekDays = DAYS.map((lbl, i) => {
+      const d   = new Date(mon); d.setDate(mon.getDate() + i);
+      const k   = makeDateKey(d);
+      const mins = list.filter(s => s.date === k).reduce((a,s) => a + Math.floor((s.seconds||0)/60), 0);
+      const isToday = k === today;
+      const bg  = mins >= 15 ? '#4CAF7D' : mins > 0 ? '#b8e0c8' : '#f0f4f9';
+      const col = mins >= 15 ? '#fff'    : mins > 0 ? '#2e7a4f' : '#aab7c4';
+      const border = isToday ? '2px solid var(--ocean)' : '2px solid transparent';
+      return `
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="font-size:8px;font-weight:800;color:var(--mist);text-transform:uppercase">${lbl}</div>
+          <div style="width:100%;aspect-ratio:1;border-radius:8px;background:${bg};border:${border};
+            display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px">
+            <div style="font-size:8px;font-weight:800;color:${col}">${mins > 0 ? mins+'m' : '—'}</div>
+          </div>
+        </div>`;
+    }).join('');
+
+    const sessionList = isExpanded ? list.slice(0, 8).map(s => {
+      const clipLabels = [
+        { key: 'audioPath_min1',  label: 'Mín. 1'  },
+        { key: 'audioPath_min5',  label: 'Mín. 5'  },
+        { key: 'audioPath_min9',  label: 'Mín. 9'  },
+        { key: 'audioPath_min13', label: 'Mín. 13' },
+      ];
+      const legacyPath = s.audioPath || null;
+
+      const clipButtons = clipLabels.map(({ key: pathKey, label }, idx) => {
+        const path     = s[pathKey] || (idx === 0 ? legacyPath : null);
+        const btnId    = `clipbtn-${s._docId}-${idx}`;
+        const playerId = `clipplay-${s._docId}-${idx}`;
+        if (!path) {
+          return `
+            <button class="clip-btn" disabled title="Engin upptaka">
+              🎤<br>${label}<br><span style="font-size:9px;opacity:.5">—</span>
+            </button>
+            <div id="${playerId}" class="clip-player"></div>`;
+        }
+        return `
+          <button id="${btnId}" class="clip-btn"
+            onclick="playClip('${path}','${playerId}','${btnId}')"
+            title="Hlusta á ${label}">
+            ▶<br>${label}
+          </button>
+          <div id="${playerId}" class="clip-player"></div>`;
+      }).join('');
+
+      return `
+        <div style="padding:10px 0;border-bottom:1px solid #f7fafc">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12px;font-weight:700;color:var(--deep)">
+                ${s.title||'Lestur'}${s.pagesRead ? ' · '+s.pagesRead+' bls.' : ''}
+              </div>
+              <div style="font-size:10px;color:var(--mist);margin-top:1px">
+                ${formatLabel(s.createdAt)||s.date||''}
+              </div>
+            </div>
+            <div style="font-size:13px;font-weight:800;color:var(--ocean);flex-shrink:0">
+              ${fmtTime(s.seconds||0)}
+            </div>
+          </div>
+          ${s.hasAudio ? `
+            <div style="font-size:10px;font-weight:700;color:var(--mist);margin-bottom:4px">🎤 Hljóðklippingar:</div>
+            <div class="audio-clips-row">${clipButtons}</div>` : ''}
+        </div>`;
+    }).join('') : '';
+
+    return `
+      <div style="background:#fff;border-radius:18px;margin-bottom:14px;box-shadow:var(--card-shadow);overflow:hidden">
+        <div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:16px;font-weight:800;color:var(--deep)">${childName}</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            ${streak > 1 ? `<div style="background:#fff8e6;border:1.5px solid var(--sun);border-radius:50px;padding:3px 9px;font-size:11px;font-weight:800;color:#b07d00">🔥${streak}</div>` : ''}
+            <div style="padding:4px 12px;border-radius:50px;font-size:11px;font-weight:800;
+              background:${readToday?'#e6f9ef':'#fff0f0'};
+              color:${readToday?'#1a7a3f':'#c0392b'};
+              border:1.5px solid ${readToday?'#4CAF7D':'#FF6B6B'}">
+              ${readToday ? '✓ Las í dag' : '◯ Á eftir'}
+            </div>
+          </div>
+        </div>
+        <div style="padding:0 12px 14px;display:flex;gap:4px;position:relative">${weekDays}</div>
+        <div style="border-top:1px solid #f0f4f9">
+          <button onclick="toggleExpand('${key}')"
+            style="width:100%;background:none;border:none;padding:10px;font-size:11px;font-weight:800;color:var(--ocean);cursor:pointer">
+            ${isExpanded ? '▲ Minna' : '▼ Meira — síðustu lotur'}
+          </button>
+        </div>
+        ${isExpanded
+          ? `<div style="padding:0 16px 12px;border-top:1px solid #f0f4f9">
+              ${sessionList || '<div style="font-size:12px;color:var(--mist);text-align:center;padding:12px">Engar lotur enn</div>'}
+             </div>`
+          : ''}
+      </div>`;
+  }).join('');
+
+  root.innerHTML = childCards + renderMonthChart(S.sessions);
+}
+
+window.toggleExpand = function(key) {
+  if (!window._expandedChildren) window._expandedChildren = {};
+  window._expandedChildren[key] = !window._expandedChildren[key];
+  renderParentHome();
+};
+
+// ── playClip ──
+window.playClip = async function(path, playerId, btnId) {
+  const playerEl = document.getElementById(playerId);
+  const btnEl    = document.getElementById(btnId);
+  if (!playerEl) return;
+  if (playerEl.style.display !== 'none' && playerEl.innerHTML !== '') {
+    playerEl.style.display = 'none';
+    playerEl.innerHTML = '';
+    if (btnEl) btnEl.className = 'clip-btn';
+    return;
+  }
+  if (btnEl) btnEl.className = 'clip-btn loading';
+  playerEl.style.display = '';
+  playerEl.innerHTML = '<div style="font-size:10px;color:var(--mist);font-weight:700;padding:4px">⏳ Hleður...</div>';
+  try {
+    const url  = await getDownloadURL(ref(storage, path));
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('Fetch mistókst: ' + resp.status);
+    const blob = await resp.blob();
+    const ext      = path.split('.').pop().toLowerCase();
+    const mimeType = ext === 'mp4' ? 'audio/mp4' : ext === 'ogg' ? 'audio/ogg' : 'audio/webm';
+    const blobUrl  = URL.createObjectURL(new Blob([blob], { type: mimeType }));
+    playerEl.innerHTML = `
+      <audio controls preload="auto" src="${blobUrl}"
+        style="width:100%;margin-top:4px;border-radius:8px"
+        onended="URL.revokeObjectURL('${blobUrl}')">
+      </audio>`;
+    const audio = playerEl.querySelector('audio');
+    if (audio) audio.play().catch(() => {});
+    if (btnEl) btnEl.className = 'clip-btn';
+  } catch(e) {
+    playerEl.innerHTML = `<div style="font-size:10px;color:var(--coral);font-weight:700;padding:4px">❌ Ekki tókst að hlaða</div>`;
+    if (btnEl) btnEl.className = 'clip-btn';
+  }
+};
+
+function renderMonthChart(sessions) {
+  const now    = new Date();
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    const d     = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const label = d.toLocaleString('is-IS', { month: 'short' });
+    const mins  = sessions.filter(s => {
+      const sd = new Date(s.date);
+      return sd.getFullYear()===d.getFullYear() && sd.getMonth()===d.getMonth() && (s.seconds||0)>=60;
+    }).reduce((a,s) => a + Math.floor((s.seconds||0)/60), 0);
+    months.push({ label, mins });
+  }
+  const maxMins = Math.max(...months.map(m => m.mins), 1);
+  const bars = months.map(m => {
+    const pct = Math.round((m.mins / maxMins) * 100);
+    return `
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+        <div style="font-size:9px;font-weight:700;color:var(--mist)">${m.mins > 0 ? m.mins+'m' : ''}</div>
+        <div style="width:100%;background:#f0f4f9;border-radius:6px;height:60px;display:flex;align-items:flex-end;overflow:hidden">
+          <div style="width:100%;background:var(--ocean);border-radius:6px;height:${pct}%;min-height:${m.mins>0?'4px':'0'}"></div>
+        </div>
+        <div style="font-size:9px;font-weight:800;color:var(--mist);text-transform:capitalize">${m.label}</div>
+      </div>`;
+  }).join('');
+  return `
+    <div style="background:#fff;border-radius:18px;padding:16px;box-shadow:var(--card-shadow);margin-top:4px">
+      <div style="font-size:11px;font-weight:800;color:var(--mist);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px">📊 Iðkun eftir mánuðum</div>
+      <div style="display:flex;gap:6px;align-items:flex-end">${bars}</div>
+    </div>`;
+}
+
+window.toggleCodes = function() {
+  const panel = document.getElementById('codes-panel');
+  const btn   = document.getElementById('codes-toggle-btn');
+  const open  = panel.style.display === 'none';
+  panel.style.display = open ? '' : 'none';
+  btn.textContent     = open ? '✕ Loka' : '🔑 Kóðar';
+};
+
+window.logout = async function(){
+  if (S.role === 'child') {
+    if (confirm('Skrá þig út? Þú þarft kóðann aftur til að skrá þig inn.')) {
+      localStorage.removeItem('upphatt_child');
+      S.role=null; S.familyId=null; S.childKey=null; S.childName=null;
+      cancelReading();
+      goTo('screen-login');
+    }
+    return;
+  }
+  if (S.familyUnsub) { S.familyUnsub(); S.familyUnsub = null; }
+  await signOut(auth);
+};
+</script>
 </body>
 </html>
